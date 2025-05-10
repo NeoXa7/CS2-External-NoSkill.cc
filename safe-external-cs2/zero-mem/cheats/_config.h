@@ -59,11 +59,11 @@ public:
 			ini.Store<float>(xorstr_("TRIGGERBOT"), xorstr_("m_flTriggerFireRate"), TRIGGER_BOT::m_flTriggerFireRate);
 
 			// SRCS
-			ini.Store<bool>(xorstr_("SRCS"), xorstr_("(m_bEnableSRCS"), SRCS::m_bEnableSRCS);
-			ini.Store<int>(xorstr_("SRCS"), xorstr_("(m_iCurrentSRCSModeIndex"), SRCS::m_iCurrentSRCSModeIndex);
-			ini.Store<int>(xorstr_("SRCS"), xorstr_("(m_iCurrentSRCSKey"), SRCS::m_iCurrentSRCSKey);
-			ini.Store<float>(xorstr_("SRCS"), xorstr_("(m_flYAW"), SRCS::m_flYAW);
-			ini.Store<float>(xorstr_("SRCS"), xorstr_("(m_flPITCH"), SRCS::m_flPITCH);
+			ini.Store<bool>(xorstr_("SRCS"), xorstr_("m_bEnableSRCS"), SRCS::m_bEnableSRCS);
+			ini.Store<int>(xorstr_("SRCS"), xorstr_("m_iCurrentSRCSModeIndex"), SRCS::m_iCurrentSRCSModeIndex);
+			ini.Store<int>(xorstr_("SRCS"), xorstr_("m_iCurrentSRCSKey"), SRCS::m_iCurrentSRCSKey);
+			ini.Store<float>(xorstr_("SRCS"), xorstr_("m_flYAW"), SRCS::m_flYAW);
+			ini.Store<float>(xorstr_("SRCS"), xorstr_("m_flPITCH"), SRCS::m_flPITCH);
 
 			//AUTOFIRE
 			/*ini.Store<bool>(xorstr_("AUTOFIRE"), xorstr_("m_bEnableAutofire"), AUTOFIRE::m_bEnableAutofire);
