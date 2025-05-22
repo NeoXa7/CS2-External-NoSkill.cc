@@ -1,9 +1,9 @@
 #include "CWeapon.h"
 
-void CWeapon::Update(CEntity& entities) {
+void CWeapon::Update() {
     char Buffer[120] = { 0 };
 
-    uintptr_t WeaponHandle = mem.Read<uintptr_t>(entities.pClippingWeapon + 0x10);
+    uintptr_t WeaponHandle = mem.Read<uintptr_t>(this->ClippingWeapon + 0x10);
     uintptr_t WeaponAddress = mem.Read<uintptr_t>(WeaponHandle + 0x20);
 
     mem.ReadRaw(WeaponAddress, Buffer, sizeof(Buffer));
@@ -11,13 +11,13 @@ void CWeapon::Update(CEntity& entities) {
 
     if (weapon_n.compare(0, 7, "weapon_") == 0) {
         std::string currentWeapon = weapon_n.substr(7);
-        EquippedWeapon[entities.ID] = currentWeapon;
+        EquippedWeapon[this->EntityID] = currentWeapon;
     }
 }
 
-std::string CWeapon::GetEquippedWeapon(uintptr_t entity)
+std::string CWeapon::GetEquippedWeapon()
 {
-    auto it = EquippedWeapon.find(entity);
+    auto it = EquippedWeapon.find(this->EntityID);
     if (it != EquippedWeapon.end()) {
         return it->second;
     }

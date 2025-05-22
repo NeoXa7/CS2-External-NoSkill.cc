@@ -32,7 +32,7 @@ static std::unordered_map<std::string, std::string> weapon_icon_table = {
     {xorstr_("p250"), "\xEE\x80\xA0"},
     {xorstr_("shield"), "shield"},
     {xorstr_("scar20"), "\xEE\x80\xA6"},
-    {xorstr_("sg556"), "\xEE\x80\xA7"},
+    {xorstr_("sg553"), "\xEE\x80\xA7"},
     {xorstr_("ssg08"), "\xEE\x80\xA8"},
     {xorstr_("knife_gg"), "knife_gg"},
     {xorstr_("knife"), "\xEE\x80\xAA"},
@@ -80,9 +80,12 @@ public:
     CWeapon(const CWeapon&) = delete;
     CWeapon& operator=(const CWeapon&) = delete;
 
-    void Update(CEntity& entities);
+    uintptr_t ClippingWeapon = 0;
+    uintptr_t EntityID = 0;
 
-    std::string GetEquippedWeapon(uintptr_t entity);
+    void Update();
+
+    std::string GetEquippedWeapon();
 
     const char* GetWeaponIcon(std::string& weapon);
 };

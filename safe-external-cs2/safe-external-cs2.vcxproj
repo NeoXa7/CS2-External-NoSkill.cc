@@ -207,6 +207,8 @@
     <ClInclude Include="zero-mem\gui\animation.h" />
     <ClInclude Include="zero-mem\gui\custom.h" />
     <ClInclude Include="zero-mem\gui\form.h" />
+    <ClInclude Include="zero-mem\gui\gifs.h" />
+    <ClInclude Include="zero-mem\gui\particles.h" />
     <ClInclude Include="zero-mem\gui\settings_manager.h" />
     <ClInclude Include="zero-mem\KDZero\kdzero_kernel.h" />
     <ClInclude Include="zero-mem\KDZero\kmemory.h" />
@@ -225,6 +227,7 @@
     <ClInclude Include="zero-mem\libs\keyauth.cc\skStr.h" />
     <ClInclude Include="zero-mem\libs\keyauth.cc\utils.hpp" />
     <ClInclude Include="zero-mem\libs\lazy.h" />
+    <ClInclude Include="zero-mem\libs\stb.h" />
     <ClInclude Include="zero-mem\libs\xorstr.h" />
     <ClInclude Include="zero-mem\main.h" />
     <ClInclude Include="zero-mem\gui\menu.h" />

@@ -1,6 +1,6 @@
 #include "esp.h"
 
-void ESP::PLAYER::RUN(CEntity& entities) {
+void ESP::RUN(CEntity& entities) {
 	if (entities.IsDormant && PLAYER::m_bDormantCheck)
 		return;
 
@@ -130,11 +130,13 @@ void ESP::PLAYER::RUN(CEntity& entities) {
 		}
 
 		// Weapon Esp (Equipped)
-		if (PLAYER::m_bEnableEquippedWeaponEsp) {
+		if (ESP::WEAPONS::m_bEnableEquippedWeaponEsp) {
 			ImGui::PushFont(RES_LOADER::FONTS::PANAROMA_WEAPONS_ICON_FONT);
-			Instance<CWeapon>::Get().Update(entities);
-			std::string player_current_weapon = Instance<CWeapon>::Get().GetEquippedWeapon(entities.ID);
-			Utils::Draw::TextWithStroke(Instance<CWeapon>::Get().GetWeaponIcon(player_current_weapon), BelowBox, PLAYER::m_flWeaponIconStrokeThickness, PLAYER::m_clEquippedWeaponIconColor, PLAYER::m_clEquippedWeaponIconStrokeColor);
+			Instance<CWeapon>::Get().ClippingWeapon = entities.pClippingWeapon;
+			Instance<CWeapon>::Get().EntityID = entities.ID;
+			Instance<CWeapon>::Get().Update();
+			std::string player_current_weapon = Instance<CWeapon>::Get().GetEquippedWeapon();
+			Utils::Draw::TextWithStroke(Instance<CWeapon>::Get().GetWeaponIcon(player_current_weapon), BelowBox, WEAPONS::m_flWeaponStrokeThickness, WEAPONS::m_clEquippedWeaponIconColor, WEAPONS::m_clEquippedWeaponIconStrokeColor);
 			ImGui::PopFont();
 		}
 	}

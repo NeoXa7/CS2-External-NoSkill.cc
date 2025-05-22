@@ -7,8 +7,9 @@
 
 namespace Aimbot {
 	inline bool m_bEnableAimbot = true;
-	inline bool m_bEnableHotkey = true;
 	inline bool m_bEnableTeamCheck = true;
+	inline bool m_bEnableSniperScopeCheck = false;
+	inline bool m_bEnableSniperRifleScopeCheck = false;
 	inline bool m_bEnableVisibilityCheck = true;
 	inline bool m_bFovBased = true;
 	inline bool m_bShowFovCircle = true;

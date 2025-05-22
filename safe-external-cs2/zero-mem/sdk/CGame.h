@@ -11,5 +11,6 @@ public:
 	CGame& operator=(const CGame&) = delete;
 
 	uintptr_t EntityList = 0;
+	uintptr_t MaxEntities = 0;
 	Matrix4x4 ViewMatrix = {};
 };

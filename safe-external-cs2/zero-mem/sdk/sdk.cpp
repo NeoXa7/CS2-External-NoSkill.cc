@@ -2,6 +2,7 @@
 #include <utils/process.h>
 #include <globals/defs.h>
 #include <globals/offsets.h>
+#include <cheats/Memory.h>
 
 // main function to get the base entity class
 void CSourceEngine::GetCBaseEntity(CBaseEntity& cBaseEntity) {
@@ -49,7 +50,7 @@ void CSourceEngine::GetCBaseEntity(CBaseEntity& cBaseEntity) {
 }
 
 // updating entities based on the entities pawn and controller inherits from CBaseEntity class (skips localplayer)
-void CSourceEngine::UpdateEntities()
+void CSourceEngine::UpdatePlayerEntities()
 {
 	CEntity cEntity;
 	std::lock_guard<std::mutex> lock(this->CEntityListMutex);
@@ -57,7 +58,7 @@ void CSourceEngine::UpdateEntities()
 
 	uintptr_t pEntityList = mem.Read<uintptr_t>(ClientDll + Offsets::dwEntityList);
 
-	for (int i = 1; i < 64; ++i)
+	for (int i = 0; i < 64; i++)
 	{
 		uintptr_t pListEntry = mem.Read<uintptr_t>(pEntityList + (8 * (i & 0x7FFF) >> 9) + 16);
 		if (!pListEntry)
@@ -98,7 +99,6 @@ void CSourceEngine::UpdateEntities()
 
 		cEntity.C_CSPlayerPawn = C_CSPlayerPawn;
 		cEntity.C_CSPlayerController = C_CSPlayerController;
-		cEntity.ID = pEntityID;
 
 		this->GetCBaseEntity(cEntity);
 		CEntityList.push_back(cEntity);
@@ -120,17 +120,8 @@ void CSourceEngine::UpdateLocalPlayer()
 void CSourceEngine::UpdateGame()
 {
 	Instance<CGame>::Get().EntityList = mem.Read<uintptr_t>(ClientDll + Offsets::dwEntityList);
+	Instance<CGame>::Get().MaxEntities = mem.Read<uintptr_t>(ClientDll + Offsets::dwGameEntitySystem_highestEntityIndex);
 	Instance<CGame>::Get().ViewMatrix = mem.Read<Matrix4x4>(ClientDll + Offsets::dwViewMatrix);
-}
-
-std::string CSourceEngine::GetDesignerName()
-{
-	for (const auto& entities : this->CEntityList) {
-		char Name[128] = { 0 };
-		mem.ReadRaw(entities.pDesignerName, Name, sizeof(Name));
-		return std::string(Name);
-	}
-	return "";
 }
 
 void CSourceEngine::IterateEntities()
@@ -141,7 +132,7 @@ void CSourceEngine::IterateEntities()
 	{
 		if (loops > 15) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			UpdateEntities();
+			UpdatePlayerEntities();
 			loops = 0;
 		}
 

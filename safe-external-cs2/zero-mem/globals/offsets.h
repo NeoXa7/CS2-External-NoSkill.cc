@@ -1,4 +1,52 @@
 #pragma once
+
+namespace C_SmokeGrenadeProjectile {
+    inline std::ptrdiff_t m_nSmokeEffectTickBegin = 0x1210; // int32
+    inline std::ptrdiff_t m_bDidSmokeEffect = 0x1214; // bool
+    inline std::ptrdiff_t m_nRandomSeed = 0x1218; // int32
+    inline std::ptrdiff_t m_vSmokeColor = 0x121C; // Vector
+    inline std::ptrdiff_t m_vSmokeDetonationPos = 0x1228; // Vector
+    inline std::ptrdiff_t m_VoxelFrameData = 0x1238; // C_NetworkUtlVectorBase<uint8>
+    inline std::ptrdiff_t m_nVoxelFrameDataSize = 0x1250; // int32
+    inline std::ptrdiff_t m_nVoxelUpdate = 0x1254; // int32
+    inline std::ptrdiff_t m_bSmokeVolumeDataReceived = 0x1258; // bool
+    inline std::ptrdiff_t m_bSmokeEffectSpawned = 0x1259; // bool
+}
+
+namespace C_PostProcessingVolume {
+    inline std::ptrdiff_t m_hPostSettings = 0xD40; // CStrongHandle<InfoForResourceTypeCPostProcessingResource>
+    inline std::ptrdiff_t m_flFadeDuration = 0xD48; // float32
+    inline std::ptrdiff_t m_flMinLogExposure = 0xD4C; // float32
+    inline std::ptrdiff_t m_flMaxLogExposure = 0xD50; // float32
+    inline std::ptrdiff_t m_flMinExposure = 0xD54; // float32
+    inline std::ptrdiff_t m_flMaxExposure = 0xD58; // float32
+    inline std::ptrdiff_t m_flExposureCompensation = 0xD5C; // float32
+    inline std::ptrdiff_t m_flExposureFadeSpeedUp = 0xD60; // float32
+    inline std::ptrdiff_t m_flExposureFadeSpeedDown = 0xD64; // float32
+    inline std::ptrdiff_t m_flTonemapEVSmoothingRange = 0xD68; // float32
+    inline std::ptrdiff_t m_bMaster = 0xD6C; // bool
+    inline std::ptrdiff_t m_bExposureControl = 0xD6D; // bool
+    inline std::ptrdiff_t m_flRate = 0xD70; // float32
+    inline std::ptrdiff_t m_flTonemapPercentTarget = 0xD74; // float32
+    inline std::ptrdiff_t m_flTonemapPercentBrightPixels = 0xD78; // float32
+    inline std::ptrdiff_t m_flTonemapMinAvgLum = 0xD7C; // float32
+}
+
+namespace C_EnvSky {
+    inline std::ptrdiff_t m_hSkyMaterial = 0xD28; // CStrongHandle<InfoForResourceTypeIMaterial2>
+    inline std::ptrdiff_t m_hSkyMaterialLightingOnly = 0xD30; // CStrongHandle<InfoForResourceTypeIMaterial2>
+    inline std::ptrdiff_t m_bStartDisabled = 0xD38; // bool
+    inline std::ptrdiff_t m_vTintColor = 0xD39; // Color
+    inline std::ptrdiff_t m_vTintColorLightingOnly = 0xD3D; // Color
+    inline std::ptrdiff_t m_flBrightnessScale = 0xD44; // float32
+    inline std::ptrdiff_t m_nFogType = 0xD48; // int32
+    inline std::ptrdiff_t m_flFogMinStart = 0xD4C; // float32
+    inline std::ptrdiff_t m_flFogMinEnd = 0xD50; // float32
+    inline std::ptrdiff_t m_flFogMaxStart = 0xD54; // float32
+    inline std::ptrdiff_t m_flFogMaxEnd = 0xD58; // float32
+    inline std::ptrdiff_t m_bEnabled = 0xD5C; // bool
+}
+
 namespace Offsets
 {
 	// Client.dll 

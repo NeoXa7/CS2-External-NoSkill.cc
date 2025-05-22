@@ -66,44 +66,51 @@ private:
 		// TriggerBot thread
 		std::thread TriggerThread(TRIGGER_BOT::RUN);
 		TriggerThread.detach();
+		
+		std::thread GameThread(&MEMORY::RUN);
+		GameThread.detach();
 
 		DX11.Initialize();
+		RES_LOADER::Device = DX11.GetDevice();
 		RES_LOADER::LoadFonts();
-		RES_LOADER::LoadImages(DX11.GetDevice());
+		RES_LOADER::LoadImages();
+
 
 		settings.LoadSettings();
 
-		// Login Loop
-		bool loggedIn = false;
+		//KAA.init();
+		//if (!KAA.response.success)
+		//{
+		//	Console::SetConsoleTextColor(RED);
+		//	std::cout << xorstr_(" [NoSkill.cc] Status: ") << KAA.response.message;
+		//	std::cin.get();
+		//}
 
-		KAA.init();
-		if (!KAA.response.success)
-		{
-			Console::SetConsoleTextColor(RED);
-			std::cout << xorstr_(" [NoSkill.cc] Status: ") << KAA.response.message;
-			std::cin.get();
-		}
+		//// Login Loop
+		//bool loggedIn = false;
 
-		m_Form.ReadData();
 
-		while (DX11.IsRunning() && !loggedIn) {
-			DX11.StartRender();
 
-			if (GetAsyncKeyState(DEFAULT_PANIC_KEY_DESTROY_PROGRAM) & 1) {
-				Console::DestroyConsoleWindow();
-				EXIT;
-			}
+		//m_Form.ReadData();
 
-			loggedIn = m_Form.RunForm();
+		//while (DX11.IsRunning() && !loggedIn) {
+		//	DX11.StartRender();
 
-			DX11.EndRender();
-		}
+		//	if (GetAsyncKeyState(DEFAULT_PANIC_KEY_DESTROY_PROGRAM) & 1) {
+		//		Console::DestroyConsoleWindow();
+		//		EXIT;
+		//	}
 
-		std::thread run(checkAuthenticated, ownerid);
-		std::thread check(sessionStatus);
+		//	loggedIn = m_Form.RunForm();
 
-		if (!m_Form.Exists())
-			return;
+		//	DX11.EndRender();
+		//}
+
+		//std::thread run(checkAuthenticated, ownerid);
+		//std::thread check(sessionStatus);
+
+		//if (!m_Form.Exists())
+		//	return;
 
 		bool is_update_needed = false;
 
@@ -169,25 +176,25 @@ private:
 				_FLAGS_::m_bEnableCheats = !_FLAGS_::m_bEnableCheats;
 			}
 
-			if (KAA.user_data.hwid.empty()) {
-				exit(0);
-			}
+			//if (KAA.user_data.hwid.empty()) {
+			//	exit(0);
+			//}
 
-			if (KAA.user_data.ip.empty()) {
-				exit(0);
-			}
+			//if (KAA.user_data.ip.empty()) {
+			//	exit(0);
+			//}
 
-			if (KAA.user_data.username.empty()) {
-				exit(0);
-			}
+			//if (KAA.user_data.username.empty()) {
+			//	exit(0);
+			//}
 
-			SourceEngine.UpdateEngine(); 
+			SourceEngine.UpdateEngine();
 
 			std::lock_guard<std::mutex> lock(SourceEngine.GetEntityListMutex());
 			auto& list = SourceEngine.GetEntityListRef();
 
-			if (!m_Form.Exists())
-				return;
+			/*if (!m_Form.Exists())
+				return;*/
 
 			if (IsDebuggerPresent()) {
 				exit(0);
@@ -195,7 +202,7 @@ private:
 
 			for (auto& entities : list) {
 				if (_FLAGS_::m_bEnableCheats) {
-					ESP::PLAYER::RUN(entities);
+					ESP::RUN(entities);
 
 				}
 			}
@@ -204,13 +211,14 @@ private:
 				SRCS::RUN();
 				Aimbot::RUN(list);
 				HITSERVICE::HIT_SOUND();
-				MEMORY::RUN();
+
 				CROSSHAIR::DRAW();
 			}
-			
-			Instance<Menu>::Get().RenderList(list);
+
+			//Instance<Menu>::Get().RenderList(list);
 
 			if (Instance<Menu>::Get().m_bVisible) {
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				Instance<Menu>::Get().Render();
 			}
 
@@ -248,6 +256,8 @@ public:
 				this->MainLoop();
 			}
 		}
+
+		//this->MainLoop();
 
 		std::cin.get();
 	}

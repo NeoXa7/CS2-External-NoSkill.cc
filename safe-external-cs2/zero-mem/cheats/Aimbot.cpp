@@ -14,6 +14,24 @@ namespace Aimbot {
 			if (entity.Health <= 0)
 				continue;
 
+			Instance<CWeapon>::Get().ClippingWeapon = LocalPlayer.pClippingWeapon;
+			Instance<CWeapon>::Get().EntityID = LocalPlayer.ID;
+			Instance<CWeapon>::Get().Update();
+
+			if (Instance<CWeapon>::Get().GetEquippedWeapon() == "awp" || Instance<CWeapon>::Get().GetEquippedWeapon() == "ssg08") {
+				if (Aimbot::m_bEnableSniperScopeCheck && !LocalPlayer.IsScoped)
+					continue;
+			}
+
+			if (Instance<CWeapon>::Get().GetEquippedWeapon() == "scar20" || 
+				Instance<CWeapon>::Get().GetEquippedWeapon() == "g3sg1" || 
+				Instance<CWeapon>::Get().GetEquippedWeapon() == "aug" ||
+				Instance<CWeapon>::Get().GetEquippedWeapon() == "sg553") 
+			{
+				if (Aimbot::m_bEnableSniperRifleScopeCheck && !LocalPlayer.IsScoped)
+					continue;
+			}
+
 			Vector3 EntityLocation;
 
 			switch (m_iCurrentAimPosIndex) {

@@ -311,6 +311,15 @@
     <ClInclude Include="zero-mem\sdk\defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="zero-mem\gui\gifs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zero-mem\libs\stb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zero-mem\gui\particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="bin\fonts\obs_icons.ttf" />

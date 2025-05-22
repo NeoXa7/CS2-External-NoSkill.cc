@@ -28,7 +28,6 @@ namespace ESP
 		inline bool m_bEnableEyeRays = false;
 		inline bool m_bEnableNames = true;
 		inline bool m_bEnableDistanceEsp = false;
-		inline bool m_bEnableEquippedWeaponEsp = true;
 
 		inline bool m_bTeamCheck = true;
 		inline bool m_bDormantCheck = true;
@@ -41,7 +40,6 @@ namespace ESP
 		inline float m_flNameTextStrokeThickness = 1.0f;
 		inline float m_flHealthTextStrokeThickness = 1.0f;
 		inline float m_flDistanceTextStrokeThickness = 1.0f;
-		inline float m_flWeaponIconStrokeThickness = 1.0f;
 
 		inline ImColor m_clBoxFilledColor = ImColor(0, 0, 0, 58);
 		inline ImColor m_clBoxUnfilledColor = ImColor(255, 255, 255);
@@ -58,16 +56,36 @@ namespace ESP
 		inline ImColor m_clBoneColor = ImColor(0, 210, 0);
 		inline ImColor m_clBoneHeadColor = ImColor(255, 0, 0, 17);
 		inline ImColor m_clBoneJointsColor = ImColor(255, 255, 247);
-		inline ImColor m_clEquippedWeaponIconColor = ImColor(250, 250, 250);
-		inline ImColor m_clEquippedWeaponIconStrokeColor = ImColor(0, 0, 0);
 
 		inline int m_iCurrentLinePosIndex = 2;
 		inline const char* m_AvailableSnapLinesPos[] = { "Top", "Center", "Bottom" };
 		inline Vector2 m_vecCurrentlinePos;
 
 		inline int m_iCurrentImageIndex = 1;
-		inline const char* m_AvailableImages[] = { "Fish-Stick", "Anime-1", "Anime-2"};
-
-		void RUN(CEntity& entities);
+		inline const char* m_AvailableImages[] = { "Fish-Stick", "Girl-1", "Girl-2"};
 	}
+
+	namespace WEAPONS {
+		inline bool m_bEnableEquippedWeaponEsp = true;
+		inline float m_flWeaponStrokeThickness = 1.0f;
+		inline ImColor m_clEquippedWeaponIconColor = ImColor(250, 250, 250);
+		inline ImColor m_clEquippedWeaponIconStrokeColor = ImColor(0, 0, 0);
+	}
+
+	namespace WORLD {
+		inline bool m_bEnableEntitiesEsp = false;
+		inline bool m_bEnableDroppedWeaponEsp = false;
+		inline bool m_bEnableProjectilesEsp = false;
+
+		inline ImColor m_clDroppedWeaponColor = ImColor(250, 250, 250);
+		inline ImColor m_clDroppedWeaponStrokeColor = ImColor(0, 0, 0);
+
+		inline ImColor m_clProjectilesColor = ImColor(250, 250, 250);
+		inline ImColor m_clProjectilesStrokeColor = ImColor(0, 0, 0);
+
+		inline ImColor m_clOtherEntitiesColor = ImColor(250, 250, 250);
+		inline ImColor m_clOtherEntitiesStrokeColor = ImColor(0, 0, 0);
+	}
+
+	void RUN(CEntity& entities);
 }

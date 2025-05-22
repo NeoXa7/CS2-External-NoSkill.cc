@@ -18,7 +18,9 @@
 #define T_COUNTER_TERRORIST 3
 #define T_COLOR ImColor(234, 209, 139)
 #define CT_COLOR ImColor(182, 212, 238, 255)
-
+#define POST_PROCESSING_VOLUME "post_processing_volume"
+#define C_ENV_SKY "env_sky"
+#define SMOKE_GRENADE_PROJECTILE "smokegrenade_projectile"
 
 enum INPUT_MODE : INT {
 	AUTO = 0,
@@ -45,6 +47,7 @@ public:
 	uintptr_t ClientDll = NULL;
 	uintptr_t Engine2Dll = NULL;
 
+
 private:
 	std::vector<CEntity> CEntityList;
 	std::mutex CEntityListMutex;
@@ -53,7 +56,7 @@ private:
 	void GetCBaseEntity(CBaseEntity& entity);
 
 	// Updates Entities (64) based on the Pawn and Controller inherits from CBaseEntity class (skips localplayer)
-	void UpdateEntities();
+	void UpdatePlayerEntities();
 
 	// Updates Localplayer based on the Pawn and Controller inherits from CBaseEntity class
 	void UpdateLocalPlayer();
@@ -66,8 +69,6 @@ public:
 	void IterateEntities(); // skips localplayer
 
 	void UpdateEngine();
-
-	std::string GetDesignerName();
 
 	// Use this to lock the entity list from outside when using GetEntityListRef()
 	// Example:

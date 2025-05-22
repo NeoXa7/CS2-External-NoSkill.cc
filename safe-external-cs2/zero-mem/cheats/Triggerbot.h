@@ -7,8 +7,8 @@
 #include <renderer/directx/directX11.h>
 
 namespace TRIGGER_BOT {
-	inline bool m_bEnableTriggerBot = true;
-	inline bool m_bEnableTeamCheck = true;
+	inline std::atomic<bool> m_bEnableTriggerBot = true;
+	inline std::atomic<bool> m_bEnableTeamCheck = true;
 
 	inline INPUT_MODE m_imTriggerMode = HOLD;
 	inline int m_iCurrentTriggerModeIndex = 1;
