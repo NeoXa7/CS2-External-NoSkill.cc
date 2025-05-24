@@ -38,6 +38,6 @@
 #define I_LIST		"\xef\x83\x89"	// U+F0C9
 #define I_SERVER	"\xef\x84\xa0"	// U+F120
 
-#define Protect xorstr_
+#define PROTECT xorstr_
 						   
 inline KDZERO_MEMORY_MANAGER mem(xorstr_("cs2.exe"));

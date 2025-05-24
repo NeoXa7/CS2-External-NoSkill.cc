@@ -5,7 +5,7 @@
 #include <sdk/maths/maths.h>
 #include <utils/draw.h>
 
-namespace Aimbot {
+namespace AIMBOT {
 	inline bool m_bEnableAimbot = true;
 	inline bool m_bEnableTeamCheck = true;
 	inline bool m_bEnableSniperScopeCheck = false;

@@ -5,7 +5,7 @@
 #include <bytes/font_awesome_icons.h>
 #include <bytes/noskill.cc_logo_bytes.h>
 #include <libs/xorstr.h>
-
+#include <globals/defs.h>
 
 namespace RES_LOADER
 {
@@ -38,6 +38,7 @@ namespace RES_LOADER
 		inline ID3D11ShaderResourceView* SCRIPTS_ICON = nullptr;
 		inline ID3D11ShaderResourceView* SETTINGS_ICON = nullptr;
 		inline ID3D11ShaderResourceView* T_ICON = nullptr;
+		inline ID3D11ShaderResourceView* CT_ICON = nullptr;
 	}
 
 	inline bool LoadImageByFile(const char* file_path, ID3D11ShaderResourceView** result) {
@@ -66,20 +67,21 @@ namespace RES_LOADER
 
 	inline void LoadImages() {
 		LoadImageByMemory(noskillcc_logo_bytes, sizeof(noskillcc_logo_bytes), &IMAGES::NO_SKILL_CC_LOGO);
-		LoadImageByFile("bin/images/skins/Fish-Stick.jpg", &IMAGES::FISH_STICK);
-		LoadImageByFile("bin/images/skins/anime-girl-1.jpg", &IMAGES::ANIME_GIRL_1);
-		LoadImageByFile("bin/images/skins/anime-girl-2.jpg", &IMAGES::ANIME_GIRL_2);
-		LoadImageByFile("bin/images/skins/anime-girl-3.jpg", &IMAGES::ANIME_GIRL_3);
-		LoadImageByFile("bin/images/icons/target.png", &IMAGES::TARGET_ICON);
-		LoadImageByFile("bin/images/icons/mouse.png", &IMAGES::MOUSE_ICON);
-		LoadImageByFile("bin/images/icons/arrow.png", &IMAGES::ARROW_ICON);
-		LoadImageByFile("bin/images/icons/person.png", &IMAGES::PERSON_ICON);
-		LoadImageByFile("bin/images/icons/gun.png", &IMAGES::GUN_ICON);
-		LoadImageByFile("bin/images/icons/world.png", &IMAGES::WORLD_ICON);
-		LoadImageByFile("bin/images/icons/danger.png", &IMAGES::EXPLOITS_ICON);
-		LoadImageByFile("bin/images/icons/terminal.png", &IMAGES::SCRIPTS_ICON);
-		LoadImageByFile("bin/images/icons/settings.png", &IMAGES::SETTINGS_ICON);
-		LoadImageByFile("bin/images/icons/T.png", &IMAGES::T_ICON);
+		LoadImageByFile(PROTECT("bin/images/skins/Fish-Stick.jpg"), &IMAGES::FISH_STICK);
+		LoadImageByFile(PROTECT("bin/images/skins/anime-girl-1.jpg"), &IMAGES::ANIME_GIRL_1);
+		LoadImageByFile(PROTECT("bin/images/skins/anime-girl-2.jpg"), &IMAGES::ANIME_GIRL_2);
+		LoadImageByFile(PROTECT("bin/images/skins/anime-girl-3.jpg"), &IMAGES::ANIME_GIRL_3);
+		LoadImageByFile(PROTECT("bin/images/icons/target.png"), &IMAGES::TARGET_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/mouse.png"), &IMAGES::MOUSE_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/arrow.png"), &IMAGES::ARROW_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/person.png"), &IMAGES::PERSON_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/gun.png"), &IMAGES::GUN_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/world.png"), &IMAGES::WORLD_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/danger.png"), &IMAGES::EXPLOITS_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/terminal.png"), &IMAGES::SCRIPTS_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/settings.png"), &IMAGES::SETTINGS_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/T.png"), &IMAGES::T_ICON);
+		LoadImageByFile(PROTECT("bin/images/icons/CT.png"), &IMAGES::CT_ICON);
 	}
 
 	inline void LoadFonts() {
@@ -102,10 +104,10 @@ namespace RES_LOADER
 		static const ImWchar icon_ranges[] = { 0xE000, 0xF8FF, 0 };
 
 		FONTS::PANAROMA_WEAPONS_ICON_FONT = io.Fonts->AddFontFromMemoryTTF(ICONS_FONT_BYTES, sizeof(ICONS_FONT_BYTES), 18.0f, &weapons_font_config, icon_ranges);
-		FONTS::PANAROMA_UI_FONT = io.Fonts->AddFontFromFileTTF("bin/fonts/notosans-bold.ttf", 15.0f);
-		FONTS::PANAROMA_UI_BIG_FONT = io.Fonts->AddFontFromFileTTF("bin/fonts/notosans-bold.ttf", 35.0f);
-		FONTS::RIFIC_BOLD = io.Fonts->AddFontFromFileTTF("bin/fonts/RifficFree-Bold.ttf", 25.0f);
-		FONTS::ARIAL_BOLD = io.Fonts->AddFontFromFileTTF("bin/fonts/arial_bold.ttf", 35.0f);
+		FONTS::PANAROMA_UI_FONT = io.Fonts->AddFontFromFileTTF(PROTECT("bin/fonts/notosans-bold.ttf"), 15.0f);
+		FONTS::PANAROMA_UI_BIG_FONT = io.Fonts->AddFontFromFileTTF(PROTECT("bin/fonts/notosans-bold.ttf"), 35.0f);
+		FONTS::RIFIC_BOLD = io.Fonts->AddFontFromFileTTF(PROTECT("bin/fonts/RifficFree-Bold.ttf"), 25.0f);
+		FONTS::ARIAL_BOLD = io.Fonts->AddFontFromFileTTF(PROTECT("bin/fonts/arial_bold.ttf"), 35.0f);
 		FONTS::FONT_AWESOME = io.Fonts->AddFontFromMemoryCompressedTTF(font_awesome_data, font_awesome_size, 15.0f, &font_awesome_config, icon_ranges);
 		FONTS::FONT_AWESOME_SIZE_5 = io.Fonts->AddFontFromMemoryCompressedTTF(font_awesome_data, font_awesome_size, 5.0f, &font_awesome_config, icon_ranges);
 		

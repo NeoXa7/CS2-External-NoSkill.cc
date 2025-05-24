@@ -18,7 +18,7 @@ KeyAuth::api KAA(name, ownerid, version, url, path);
 std::string tm_to_readable_time(tm ctx) {
     char buffer[80];
 
-    strftime(buffer, sizeof(buffer), "%a %m/%d/%y %H:%M:%S %Z", &ctx);
+    strftime(buffer, sizeof(buffer), "%a %m/%d/%y %H:%M:%S", &ctx); // %Z
 
     return std::string(buffer);
 }

@@ -23,7 +23,6 @@
 	 DO NOT CHANGE THE CODE BELOW OR YOU WILL ENCOUNTER AN POSSIBLE BLUE SCREEN OF DEATH 
 */
 
-Renderer::DIRECTX11 DX11(xorstr_("NoSkill.cc"), SCREEN_WIDTH, SCREEN_HEIGHT);
 
 class MAIN {
 public:
@@ -39,7 +38,7 @@ private:
 	Form& m_Form = Instance<Form>::Get();
 
 	void SetupConsole() {
-		Console::CreateConsoleWindow((xorstr_("NoSkill.cc - Compiled at :  ") + compilation_date + " " + compilation_time).c_str());
+		Console::CreateConsoleWindow((PROTECT("NoSkill.cc - Compiled at :  ") + compilation_date + " " + compilation_time).c_str());
 		Console::SetConsoleTextColor(RED);
 		std::cout << R"(  _  _  ___    ___ _  _____ _    _      ___ ___ 
  | \| |/ _ \  / __| |/ /_ _| |  | |    / __/ __|
@@ -47,16 +46,17 @@ private:
  |_|\_|\___/  |___/_|\_\___|____|____(_)___\___|
                                                 )" << std::endl;
 
-		std::cout << xorstr_(" [NoSkill.cc] Note: This cheat was developed for 'Windows 10' and may not work on other versions of 'Windows'.\n\n");
+		std::cout << PROTECT(" [NoSkill.cc] Note: This cheat was developed for 'Windows 10' and may not work on other versions of 'Windows'.\n\n");
 
 		Console::SetConsoleTextColor(YELLOW);
 
-		std::cout << xorstr_(" [NoSkill.cc] Connecting...\n");
-		std::cout << xorstr_(" [NoSkill.cc] Connected\n");
-		std::cout << xorstr_("\n");
+		std::cout << PROTECT(" [NoSkill.cc] Connecting...\n");
+		std::cout << PROTECT(" [NoSkill.cc] Connected\n");
+		std::cout << PROTECT("\n");
 	}
 
 	void MainLoop() {
+		Renderer::DIRECTX11 DX11(PROTECT("NoSkill.cc"), SCREEN_WIDTH, SCREEN_HEIGHT);
 		this->SetupConsole();
 
 		// EntityList loop thread
@@ -75,55 +75,56 @@ private:
 		RES_LOADER::LoadFonts();
 		RES_LOADER::LoadImages();
 
+		KAA.init();
+		if (!KAA.response.success)
+		{
+			Console::SetConsoleTextColor(RED);
+			std::cout << PROTECT(" [NoSkill.cc] Status: ") << KAA.response.message;
+			std::cin.get();
+		}
+
+		// Login Loop
+		bool loggedIn = false;
+
+		m_Form.ReadData();
+
+		while (DX11.IsRunning() && !loggedIn) {
+			DX11.StartRender();
+
+			if (GetAsyncKeyState(DEFAULT_PANIC_KEY_DESTROY_PROGRAM) & 1) {
+				Console::DestroyConsoleWindow();
+				EXIT;
+			}
+
+			loggedIn = m_Form.RunForm();
+
+			DX11.EndRender();
+		}
 
 		settings.LoadSettings();
 
-		//KAA.init();
-		//if (!KAA.response.success)
-		//{
-		//	Console::SetConsoleTextColor(RED);
-		//	std::cout << xorstr_(" [NoSkill.cc] Status: ") << KAA.response.message;
-		//	std::cin.get();
-		//}
+		std::thread run(checkAuthenticated, ownerid);
+		std::thread check(sessionStatus);
 
-		//// Login Loop
-		//bool loggedIn = false;
-
-
-
-		//m_Form.ReadData();
-
-		//while (DX11.IsRunning() && !loggedIn) {
-		//	DX11.StartRender();
-
-		//	if (GetAsyncKeyState(DEFAULT_PANIC_KEY_DESTROY_PROGRAM) & 1) {
-		//		Console::DestroyConsoleWindow();
-		//		EXIT;
-		//	}
-
-		//	loggedIn = m_Form.RunForm();
-
-		//	DX11.EndRender();
-		//}
-
-		//std::thread run(checkAuthenticated, ownerid);
-		//std::thread check(sessionStatus);
-
-		//if (!m_Form.Exists())
-		//	return;
+		if (!m_Form.Exists())
+			return;
 
 		bool is_update_needed = false;
 
 		if (_FLAGS_::m_bAutomaticUpdate) {
 			if (Instance<Updater>::Get().NeedsUpdate()) {
-				is_update_needed = true;
-				std::cout << xorstr_("[NoSkill.cc] Update required, updating cheat") << '\n';
+				std::cout << PROTECT("[NoSkill.cc] Update required, updating cheat") << '\n';
 				if (Instance<Updater>::Get().DownloadOffsets()) {
 					Instance<Updater>::Get().UpdateOffsets();
 				}
 			}
 			else { 
 				Instance<Updater>::Get().UpdateOffsets();
+			}
+		}
+		else {
+			if (Instance<Updater>::Get().NeedsUpdate()) {
+				is_update_needed = true;
 			}
 		}
 
@@ -176,25 +177,17 @@ private:
 				_FLAGS_::m_bEnableCheats = !_FLAGS_::m_bEnableCheats;
 			}
 
-			//if (KAA.user_data.hwid.empty()) {
-			//	exit(0);
-			//}
-
-			//if (KAA.user_data.ip.empty()) {
-			//	exit(0);
-			//}
-
-			//if (KAA.user_data.username.empty()) {
-			//	exit(0);
-			//}
+			if (KAA.user_data.hwid.empty() || KAA.user_data.ip.empty() || KAA.user_data.username.empty()) {
+				exit(0);
+			}
 
 			SourceEngine.UpdateEngine();
 
 			std::lock_guard<std::mutex> lock(SourceEngine.GetEntityListMutex());
 			auto& list = SourceEngine.GetEntityListRef();
 
-			/*if (!m_Form.Exists())
-				return;*/
+			if (!m_Form.Exists())
+				return;
 
 			if (IsDebuggerPresent()) {
 				exit(0);
@@ -203,22 +196,19 @@ private:
 			for (auto& entities : list) {
 				if (_FLAGS_::m_bEnableCheats) {
 					ESP::RUN(entities);
-
 				}
 			}
 
 			if (_FLAGS_::m_bEnableCheats) {
 				SRCS::RUN();
-				Aimbot::RUN(list);
+				AIMBOT::RUN(list);
 				HITSERVICE::HIT_SOUND();
-
 				CROSSHAIR::DRAW();
 			}
 
 			//Instance<Menu>::Get().RenderList(list);
 
 			if (Instance<Menu>::Get().m_bVisible) {
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				Instance<Menu>::Get().Render();
 			}
 
@@ -233,19 +223,19 @@ public:
 			exit(0);
 		}
 
-		SourceEngine.ProcessID = m_KernelProcessManager.GetProcessID("cs2.exe");
+		/*SourceEngine.ProcessID = m_KernelProcessManager.GetProcessID("cs2.exe");
 
 		if (!SourceEngine.ProcessID) {
-			LI_FN(printf).get()(xorstr_(" [NoSkill.cc] Failed to get Process ID of Process (", m_SourceEngine.ProcessName, ") : ", m_SourceEngine.ProcessID, '\n'));
+			LI_FN(printf).get()(PROTECT(" [NoSkill.cc] Failed to get Process ID of Process (", m_SourceEngine.ProcessName, ") : ", m_SourceEngine.ProcessID, '\n'));
 			std::cin.get();
 		}
 		else
 		{
-			SourceEngine.ClientDll = m_KernelProcessManager.GetModuleBaseAddress(xorstr_("client.dll"), SourceEngine.ProcessID);
+			SourceEngine.ClientDll = m_KernelProcessManager.GetModuleBaseAddress(PROTECT("client.dll"), SourceEngine.ProcessID);
 
 			if (!SourceEngine.ClientDll) {
-				LI_FN(printf).get()(xorstr_(" [NoSkill.cc] Failed to read from driver (KDZero.sys)\n"));
-				LI_FN(printf).get()(xorstr_(" [NoSkill.cc] Make sure to map (KDZero.sys) using kd-mapper (provided) or any other tool first and then try again!\n"));
+				LI_FN(printf).get()(PROTECT(" [NoSkill.cc] Failed to read from driver (KDZero.sys)\n"));
+				LI_FN(printf).get()(PROTECT(" [NoSkill.cc] Make sure to map (KDZero.sys) using kd-mapper (provided) or any other tool first and then try again!\n"));
 				std::cin.get();
 			}
 			else { 
@@ -257,7 +247,9 @@ public:
 			}
 		}
 
-		//this->MainLoop();
+		*/
+
+		this->MainLoop();
 
 		std::cin.get();
 	}

@@ -60,20 +60,19 @@ private:
 
 	void CreateAimAimbotUI() {
 		ImGui::SetCursorPos(ImVec2(220, 70));
-		if (uic.BeginColumn(Protect("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Aimbot");
-				uic.ToggleButton(Protect("Enable"), &Aimbot::m_bEnableAimbot);
-				uic.ToggleButton(Protect("Fov Based"), &Aimbot::m_bFovBased);
-				uic.ToggleButton(Protect("Show Fov Circle"), &Aimbot::m_bShowFovCircle);
-				uic.ToggleButton(Protect("Visible Check"), &Aimbot::m_bEnableVisibilityCheck);
-				uic.ToggleButton(Protect("Team Check"), &Aimbot::m_bEnableTeamCheck);
-				uic.ToggleButton(Protect("Sniper Check"), &Aimbot::m_bEnableSniperScopeCheck);
-				uic.ToggleButton(Protect("SR Check"), &Aimbot::m_bEnableSniperRifleScopeCheck);
+				uic.ToggleButton(PROTECT("Enable"), &AIMBOT::m_bEnableAimbot);
+				uic.ToggleButton(PROTECT("Fov Based"), &AIMBOT::m_bFovBased);
+				uic.ToggleButton(PROTECT("Show Fov Circle"), &AIMBOT::m_bShowFovCircle);
+				uic.ToggleButton(PROTECT("Team Check"), &AIMBOT::m_bEnableTeamCheck);
+				uic.ToggleButton(PROTECT("Sniper Check"), &AIMBOT::m_bEnableSniperScopeCheck);
+				uic.ToggleButton(PROTECT("SR Check"), &AIMBOT::m_bEnableSniperRifleScopeCheck);
 			}
 			uic.EndFrame();
 		}
@@ -83,23 +82,32 @@ private:
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f); // 20px spacing
 
-		if (uic.BeginColumn(xorstr_("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Configurations");
-				uic.ColorEditor(Protect("Fov"), &Aimbot::m_clFOVCircleColor);
-				uic.Slider<float>(Protect("Smoothness"), &Aimbot::m_flSmoothness, 2.0f, 10.0f);
-				uic.Slider<float>(Protect("FOV"), &Aimbot::m_flFOV, 1.0f, 460.0f);
-				uic.Slider<float>(Protect("Circle Thickness"), &Aimbot::m_flFOVCircleThickness, 0.0f, 4.0f);
+				uic.ColorEditor(PROTECT("Fov"), &AIMBOT::m_clFOVCircleColor);
+				uic.Slider<float>(PROTECT("Smoothness"), &AIMBOT::m_flSmoothness, 2.0f, 10.0f);
+				uic.Slider<float>(PROTECT("FOV"), &AIMBOT::m_flFOV, 1.0f, 460.0f);
+				uic.Slider<float>(PROTECT("Circle Thickness"), &AIMBOT::m_flFOVCircleThickness, 0.0f, 4.0f);
+				uic.LeaveLine(2);
+				uic.ComboBox(
+					PROTECT(" Aim Position"),
+					AIMBOT::m_AimPositions[AIMBOT::m_iCurrentAimPosIndex],
+					&AIMBOT::m_iCurrentAimPosIndex,
+					AIMBOT::m_AimPositions,
+					IM_ARRAYSIZE(AIMBOT::m_AimPositions)
+				);
+
 				uic.LeaveLine(1);
-				uic.RadioButtonGroup(Protect("Mode"), &Aimbot::m_iCurrentAimbotModeIndex, Aimbot::m_AvailableAimbotModes, IM_ARRAYSIZE(Aimbot::m_AvailableAimbotModes), true);
-				if (Aimbot::m_iCurrentAimbotModeIndex == HOLD) {
+				uic.RadioButtonGroup(PROTECT("Mode"), &AIMBOT::m_iCurrentAimbotModeIndex, AIMBOT::m_AvailableAimbotModes, IM_ARRAYSIZE(AIMBOT::m_AvailableAimbotModes), true);
+				if (AIMBOT::m_iCurrentAimbotModeIndex == HOLD) {
 					uic.LeaveLine(1);
 					ImGui::TextColored(ImColor(255, 255, 255, 255), "Hotkey");
-					uic.Hotkey(&Aimbot::m_iCurrentKEY);
+					uic.Hotkey(&AIMBOT::m_iCurrentKEY);
 				}
 			}
 			uic.EndFrame();
@@ -110,7 +118,7 @@ private:
 
 	void CreateAimTriggerBotUI() {
 		ImGui::SetCursorPos(ImVec2(220, 70));
-		if (uic.BeginColumn(Protect("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
@@ -121,11 +129,11 @@ private:
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Triggerbot");
 
-				if (uic.ToggleButton(Protect("Enable"), &enable_trigger_bot)) {
+				if (uic.ToggleButton(PROTECT("Enable"), &enable_trigger_bot)) {
 					TRIGGER_BOT::m_bEnableTriggerBot.store(enable_trigger_bot);
 				}
 
-				if (uic.ToggleButton(Protect("Team Check"), &enable_trigger_bot_team_check)) {
+				if (uic.ToggleButton(PROTECT("Team Check"), &enable_trigger_bot_team_check)) {
 					TRIGGER_BOT::m_bEnableTeamCheck.store(enable_trigger_bot_team_check);
 				}
 			}
@@ -137,17 +145,17 @@ private:
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f); // 20px spacing
 
-		if (uic.BeginColumn(xorstr_("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Configurations");
-				uic.Slider(Protect("Delay"), &TRIGGER_BOT::m_flTriggerDelay, 0.0f, 1000.0f);
-				uic.Slider(Protect("Fire Rate"), &TRIGGER_BOT::m_flTriggerFireRate, 0.0f, 1000.0f);
+				uic.Slider(PROTECT("Delay"), &TRIGGER_BOT::m_flTriggerDelay, 0.0f, 1000.0f);
+				uic.Slider(PROTECT("Fire Rate"), &TRIGGER_BOT::m_flTriggerFireRate, 0.0f, 1000.0f);
 				uic.LeaveLine(1);
-				uic.RadioButtonGroup(Protect("Mode"), &TRIGGER_BOT::m_iCurrentTriggerModeIndex, TRIGGER_BOT::m_AvailableFireModes, IM_ARRAYSIZE(TRIGGER_BOT::m_AvailableFireModes), true);
+				uic.RadioButtonGroup(PROTECT("Mode"), &TRIGGER_BOT::m_iCurrentTriggerModeIndex, TRIGGER_BOT::m_AvailableFireModes, IM_ARRAYSIZE(TRIGGER_BOT::m_AvailableFireModes), true);
 				if (TRIGGER_BOT::m_iCurrentTriggerModeIndex == HOLD) {
 					uic.LeaveLine(1);
 					ImGui::TextColored(ImColor(255, 255, 255, 255), "Hotkey");
@@ -162,14 +170,14 @@ private:
 
 	void CreateAimRCSUI() {
 		ImGui::SetCursorPos(ImVec2(220, 70));
-		if (uic.BeginColumn(Protect("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("RCS");
-				uic.ToggleButton(Protect("Enable"), &SRCS::m_bEnableSRCS);
+				uic.ToggleButton(PROTECT("Enable"), &SRCS::m_bEnableSRCS);
 			}
 			uic.EndFrame();
 		}
@@ -179,17 +187,17 @@ private:
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f); // 20px spacing
 
-		if (uic.BeginColumn(xorstr_("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Configurations");
-				uic.Slider(Protect("YAW"), &SRCS::m_flYAW, 1.0f, 3.0f);
-				uic.Slider(Protect("PITCH"), &SRCS::m_flPITCH, 1.0f, 3.0f);
+				uic.Slider(PROTECT("YAW"), &SRCS::m_flYAW, 1.0f, 3.0f);
+				uic.Slider(PROTECT("PITCH"), &SRCS::m_flPITCH, 1.0f, 3.0f);
 				uic.LeaveLine(1);
-				uic.RadioButtonGroup(Protect("Mode"), &SRCS::m_iCurrentSRCSModeIndex, SRCS::m_AvailableModes, IM_ARRAYSIZE(SRCS::m_AvailableModes), true);
+				uic.RadioButtonGroup(PROTECT("Mode"), &SRCS::m_iCurrentSRCSModeIndex, SRCS::m_AvailableModes, IM_ARRAYSIZE(SRCS::m_AvailableModes), true);
 				if (SRCS::m_iCurrentSRCSModeIndex == HOLD) {
 					uic.LeaveLine(1);
 					ImGui::TextColored(ImColor(255, 255, 255, 255), "Hotkey");
@@ -204,31 +212,31 @@ private:
 
 	void CreateVisualPlayerUI() {
 		ImGui::SetCursorPos(ImVec2(220, 70));
-		if (uic.BeginColumn(Protect("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Player");
-				uic.ToggleButton(Protect("Enable"), &ESP::PLAYER::m_bEnablePlayerEsp);
-				uic.ToggleButton(Protect("Box"), &ESP::PLAYER::m_bEnableBox);
-				uic.ToggleButton(Protect("Filled"), &ESP::PLAYER::m_bEnableBoxFilled);
-				uic.ToggleButton(Protect("Image"), &ESP::PLAYER::m_bEnableBoxImage);
-				uic.ToggleButton(Protect("Lines"), &ESP::PLAYER::m_bEnableSnapLines);
-				uic.ToggleButton(Protect("Health"), &ESP::PLAYER::m_bEnableHealthBar);
-				uic.ToggleButton(Protect("Text"), &ESP::PLAYER::m_bEnableHealthText);
-				uic.ToggleButton(Protect("Armor"), &ESP::PLAYER::m_bEnableArmorBar);
-				uic.ToggleButton(Protect("Bone"), &ESP::PLAYER::m_bEnableBones);
-				uic.ToggleButton(Protect("Joint"), &ESP::PLAYER::m_bEnableBonesJoints);
-				uic.ToggleButton(Protect("Head"), &ESP::PLAYER::m_bEnableHead);
-				uic.ToggleButton(Protect("Filled##head"), &ESP::PLAYER::m_bEnableHeadFilled);
-				uic.ToggleButton(Protect("Rays"), &ESP::PLAYER::m_bEnableEyeRays);
-				uic.ToggleButton(Protect("Names"), &ESP::PLAYER::m_bEnableNames);
-				uic.ToggleButton(Protect("Distance"), &ESP::PLAYER::m_bEnableDistanceEsp);
-				uic.ToggleButton(Protect("Crosshair"), &CROSSHAIR::m_bEnableCrosshair);
-				uic.ToggleButton(Protect("Team Check"), &ESP::PLAYER::m_bTeamCheck);
-				uic.ToggleButton(Protect("Dormant Check"), &ESP::PLAYER::m_bDormantCheck);
+				uic.ToggleButton(PROTECT("Enable"), &ESP::PLAYER::m_bEnablePlayerEsp);
+				uic.ToggleButton(PROTECT("Box"), &ESP::PLAYER::m_bEnableBox);
+				uic.ToggleButton(PROTECT("Filled"), &ESP::PLAYER::m_bEnableBoxFilled);
+				uic.ToggleButton(PROTECT("Image"), &ESP::PLAYER::m_bEnableBoxImage);
+				uic.ToggleButton(PROTECT("Lines"), &ESP::PLAYER::m_bEnableSnapLines);
+				uic.ToggleButton(PROTECT("Health"), &ESP::PLAYER::m_bEnableHealthBar);
+				uic.ToggleButton(PROTECT("Text"), &ESP::PLAYER::m_bEnableHealthText);
+				uic.ToggleButton(PROTECT("Armor"), &ESP::PLAYER::m_bEnableArmorBar);
+				uic.ToggleButton(PROTECT("Bone"), &ESP::PLAYER::m_bEnableBones);
+				uic.ToggleButton(PROTECT("Joint"), &ESP::PLAYER::m_bEnableBonesJoints);
+				uic.ToggleButton(PROTECT("Head"), &ESP::PLAYER::m_bEnableHead);
+				uic.ToggleButton(PROTECT("Filled##head"), &ESP::PLAYER::m_bEnableHeadFilled);
+				uic.ToggleButton(PROTECT("Rays"), &ESP::PLAYER::m_bEnableEyeRays);
+				uic.ToggleButton(PROTECT("Names"), &ESP::PLAYER::m_bEnableNames);
+				uic.ToggleButton(PROTECT("Distance"), &ESP::PLAYER::m_bEnableDistanceEsp);
+				uic.ToggleButton(PROTECT("Crosshair"), &CROSSHAIR::m_bEnableCrosshair);
+				uic.ToggleButton(PROTECT("Team Check"), &ESP::PLAYER::m_bTeamCheck);
+				uic.ToggleButton(PROTECT("Dormant Check"), &ESP::PLAYER::m_bDormantCheck);
 			}
 			uic.EndFrame();
 		}
@@ -238,35 +246,36 @@ private:
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f); // 20px spacing
 
-		if (uic.BeginColumn(xorstr_("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Configurations");
-				uic.ColorEditor(Protect("Box"), &ESP::PLAYER::m_clBoxUnfilledColor);
-				uic.ColorEditor(Protect("Fill"), &ESP::PLAYER::m_clBoxFilledColor);
-				uic.ColorEditor(Protect("Line"), &ESP::PLAYER::m_clLineColor);
-				uic.ColorEditor(Protect("Point"), &ESP::PLAYER::m_clLinePointColor);
-				uic.ColorEditor(Protect("Name"), &ESP::PLAYER::m_clNameColor);
-				uic.ColorEditor(Protect("Stroke##name"), &ESP::PLAYER::m_clNameStrokeColor);
-				uic.ColorEditor(Protect("Health"), &ESP::PLAYER::m_clHealthTextColor);
-				uic.ColorEditor(Protect("Stroke##health"), &ESP::PLAYER::m_clHealthTextStrokeColor);
-				uic.ColorEditor(Protect("Armor"), &ESP::PLAYER::m_clArmorBarColor);
-				uic.ColorEditor(Protect("Stroke"), &ESP::PLAYER::m_clDistanceTextStrokeColor);
-				uic.ColorEditor(Protect("Bone"), &ESP::PLAYER::m_clBoneColor);
-				uic.ColorEditor(Protect("Head"), &ESP::PLAYER::m_clBoneHeadColor);
-				uic.ColorEditor(Protect("Joint"), &ESP::PLAYER::m_clBoneJointsColor);
-				uic.ColorEditor(Protect("Distance"), &ESP::PLAYER::m_clDistanceTextColor);
-				uic.Slider(Protect("Crosshair Size"), &CROSSHAIR::CrossHairSize, 0.0f, 40.0f);
-				uic.Slider(Protect("Box Thickness"), &ESP::PLAYER::m_flBoxUnfilledThickness, 0.0f, 3.0f);
-				uic.Slider(Protect("Box Radius"), &ESP::PLAYER::m_flBoxRounding, 0.0f, 6.0f);
-				uic.Slider(Protect("Line Thickness"), &ESP::PLAYER::m_flLinesThickness, 0.0f, 3.0f);
-				uic.Slider(Protect("Bone Thickness"), &ESP::PLAYER::m_flBonesThickness, 0.0f, 3.0f);
-				uic.Slider(Protect("Joint Radius"), &ESP::PLAYER::m_flJointRadius, 0.0f, 3.0f);
-				uic.RadioButtonGroup(Protect(" Line Position"), &ESP::PLAYER::m_iCurrentLinePosIndex, ESP::PLAYER::m_AvailableSnapLinesPos, IM_ARRAYSIZE(ESP::PLAYER::m_AvailableSnapLinesPos), false);
-				uic.RadioButtonGroup(Protect(" Box Texture"), &ESP::PLAYER::m_iCurrentImageIndex, ESP::PLAYER::m_AvailableImages, IM_ARRAYSIZE(ESP::PLAYER::m_AvailableImages), false);
+				uic.ColorEditor(PROTECT("Box"), &ESP::PLAYER::m_clBoxUnfilledColor);
+				uic.ColorEditor(PROTECT("Fill"), &ESP::PLAYER::m_clBoxFilledColor);
+				uic.ColorEditor(PROTECT("Line"), &ESP::PLAYER::m_clLineColor);
+				uic.ColorEditor(PROTECT("Point"), &ESP::PLAYER::m_clLinePointColor);
+				uic.ColorEditor(PROTECT("Name"), &ESP::PLAYER::m_clNameColor);
+				uic.ColorEditor(PROTECT("Stroke##name"), &ESP::PLAYER::m_clNameStrokeColor);
+				uic.ColorEditor(PROTECT("Health"), &ESP::PLAYER::m_clHealthTextColor);
+				uic.ColorEditor(PROTECT("Stroke##health"), &ESP::PLAYER::m_clHealthTextStrokeColor);
+				uic.ColorEditor(PROTECT("Armor"), &ESP::PLAYER::m_clArmorBarColor);
+				uic.ColorEditor(PROTECT("Stroke"), &ESP::PLAYER::m_clDistanceTextStrokeColor);
+				uic.ColorEditor(PROTECT("Bone"), &ESP::PLAYER::m_clBoneColor);
+				uic.ColorEditor(PROTECT("Head"), &ESP::PLAYER::m_clBoneHeadColor);
+				uic.ColorEditor(PROTECT("Joint"), &ESP::PLAYER::m_clBoneJointsColor);
+				uic.ColorEditor(PROTECT("Distance"), &ESP::PLAYER::m_clDistanceTextColor);
+				uic.ColorEditor(PROTECT("Crosshair"), &CROSSHAIR::m_clCrossHairColor);
+				uic.Slider(PROTECT("Crosshair Size"), &CROSSHAIR::m_flCrossHairSize, 0.0f, 40.0f);
+				uic.Slider(PROTECT("Box Thickness"), &ESP::PLAYER::m_flBoxUnfilledThickness, 0.0f, 3.0f);
+				uic.Slider(PROTECT("Box Radius"), &ESP::PLAYER::m_flBoxRounding, 0.0f, 6.0f);
+				uic.Slider(PROTECT("Line Thickness"), &ESP::PLAYER::m_flLinesThickness, 0.0f, 3.0f);
+				uic.Slider(PROTECT("Bone Thickness"), &ESP::PLAYER::m_flBonesThickness, 0.0f, 3.0f);
+				uic.Slider(PROTECT("Joint Radius"), &ESP::PLAYER::m_flJointRadius, 0.0f, 3.0f);
+				uic.RadioButtonGroup(PROTECT(" Line Position"), &ESP::PLAYER::m_iCurrentLinePosIndex, ESP::PLAYER::m_AvailableSnapLinesPos, IM_ARRAYSIZE(ESP::PLAYER::m_AvailableSnapLinesPos), false);
+				uic.RadioButtonGroup(PROTECT(" Box Texture"), &ESP::PLAYER::m_iCurrentImageIndex, ESP::PLAYER::m_AvailableImages, IM_ARRAYSIZE(ESP::PLAYER::m_AvailableImages), false);
 			}
 			uic.EndFrame();
 		}
@@ -276,15 +285,35 @@ private:
 
 	void CreateVisualWeaponsUI() {
 		ImGui::SetCursorPos(ImVec2(220, 70));
-		if (uic.BeginColumn(Protect("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Weapons");
-				uic.ToggleButton(Protect("Equipped Weapons"), &ESP::WEAPONS::m_bEnableEquippedWeaponEsp);
-				uic.ToggleButton(Protect("Hitsound"), &HITSERVICE::m_bEnableHitsound);
+				uic.ToggleButton(PROTECT("Equipped Weapons"), &ESP::WEAPONS::m_bEnableEquippedWeaponEsp);
+				uic.ToggleButton(PROTECT("Hitsound"), &HITSERVICE::m_bEnableHitsound);
+				uic.LeaveLine(2);
+				HITSERVICE::ScanDirectoryForFile(PROTECT(".wav"));
+
+				if (!HITSERVICE::wav_files.empty()) {
+					static int m_iSelectedHitSoundIndex = 0;
+					std::vector<const char*> wav_files_cstr;
+
+					for (const auto& file : HITSERVICE::wav_files) {
+						wav_files_cstr.push_back(file.c_str());
+					}
+
+					uic.ComboBox(
+						PROTECT("HitSound (.wav)"),
+						HITSERVICE::wav_files[m_iSelectedHitSoundIndex].c_str(),
+						&m_iSelectedHitSoundIndex,
+						wav_files_cstr.data(),
+						wav_files_cstr.size()
+					);
+					HITSERVICE::file_name = HITSERVICE::wav_files[m_iSelectedHitSoundIndex];
+				}
 			}
 			uic.EndFrame();
 		}
@@ -294,15 +323,15 @@ private:
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f); // 20px spacing
 
-		if (uic.BeginColumn(xorstr_("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Configurations");
-				uic.ColorEditor(Protect("Color"), &ESP::WEAPONS::m_clEquippedWeaponIconColor);
-				uic.ColorEditor(Protect("Stroke"), &ESP::WEAPONS::m_clEquippedWeaponIconStrokeColor);
+				uic.ColorEditor(PROTECT("Color"), &ESP::WEAPONS::m_clEquippedWeaponIconColor);
+				uic.ColorEditor(PROTECT("Stroke"), &ESP::WEAPONS::m_clEquippedWeaponIconStrokeColor);
 			}
 			uic.EndFrame();
 		}
@@ -312,16 +341,16 @@ private:
 
 	void CreateVisualWorldUI() {
 		ImGui::SetCursorPos(ImVec2(220, 70));
-		if (uic.BeginColumn(Protect("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("World");
-				uic.ToggleButton(Protect("Dropped Weapons"), &ESP::WORLD::m_bEnableDroppedWeaponEsp);
-				uic.ToggleButton(Protect("Projectiles"), &ESP::WORLD::m_bEnableProjectilesEsp);
-				uic.ToggleButton(Protect("Entities"), &ESP::WORLD::m_bEnableEntitiesEsp);
+				uic.ToggleButton(PROTECT("Dropped Weapons"), &ESP::WORLD::m_bEnableDroppedWeaponEsp);
+				uic.ToggleButton(PROTECT("Projectiles"), &ESP::WORLD::m_bEnableProjectilesEsp);
+				uic.ToggleButton(PROTECT("Entities"), &ESP::WORLD::m_bEnableEntitiesEsp);
 			}
 			uic.EndFrame();
 		}
@@ -331,27 +360,27 @@ private:
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f); // 20px spacing
 
-		if (uic.BeginColumn(xorstr_("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
-				uic.DrawTitle("Configurations");
-				uic.ColorEditor(Protect("Dropped Weapon"), &ESP::WORLD::m_clDroppedWeaponColor);
-				uic.ColorEditor(Protect("Stroke##weapon"), &ESP::WORLD::m_clDroppedWeaponStrokeColor);
-				uic.ColorEditor(Protect("Projectiles"), &ESP::WORLD::m_clProjectilesColor);
-				uic.ColorEditor(Protect("Stroke##projectile"), &ESP::WORLD::m_clProjectilesStrokeColor);
+				uic.DrawTitle(PROTECT("Configurations"));
+				uic.ColorEditor(PROTECT("Dropped Weapon"), &ESP::WORLD::m_clDroppedWeaponColor);
+				uic.ColorEditor(PROTECT("Stroke##weapon"), &ESP::WORLD::m_clDroppedWeaponStrokeColor);
+				uic.ColorEditor(PROTECT("Projectiles"), &ESP::WORLD::m_clProjectilesColor);
+				uic.ColorEditor(PROTECT("Stroke##projectile"), &ESP::WORLD::m_clProjectilesStrokeColor);
 			}
 			uic.EndFrame();
 		}
 
 		uic.EndColumn();
 	}
-	
+
 	void CreateMiscExploitsUI() {
 		ImGui::SetCursorPos(ImVec2(220, 70));
-		if (uic.BeginColumn(Protect("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
@@ -370,27 +399,27 @@ private:
 				uic.LeaveLine(1);
 				ImGui::PopStyleColor(1);
 
-				if (uic.ToggleButton(Protect("Change Flash Alpha"), &flash_alpha_override)) {
+				if (uic.ToggleButton(PROTECT("Override Flash Alpha"), &flash_alpha_override)) {
 					MEMORY::m_bEnableFlashAlphaOverride.store(flash_alpha_override);
 				}
 
-				if (uic.ToggleButton(Protect("Change Smoke Alpha"), &smoke_alpha_override)) {
+				if (uic.ToggleButton(PROTECT("Override Smoke Alpha"), &smoke_alpha_override)) {
 					MEMORY::m_bEnableSmokeAlphaOverride.store(smoke_alpha_override);
 				}
 
-				if (uic.ToggleButton(Protect("Change Smoke Color"), &smoke_color_override)) {
+				if (uic.ToggleButton(PROTECT("Override Smoke Color"), &smoke_color_override)) {
 					MEMORY::m_bEnableSmokeColorOverride.store(smoke_color_override);
 				}
 
-				if (uic.ToggleButton(Protect("Change Camera FOV"), &camera_fov_override)) {
+				if (uic.ToggleButton(PROTECT("Override Camera FOV"), &camera_fov_override)) {
 					MEMORY::m_bEnableCameraFovOverride.store(camera_fov_override);
 				}
 
-				if (uic.ToggleButton(Protect("Change Exposure"), &exposure_override)) {
+				if (uic.ToggleButton(PROTECT("Override Exposure"), &exposure_override)) {
 					MEMORY::m_bExposureOverride.store(exposure_override);
 				}
 
-				if (uic.ToggleButton(Protect("Change Sky Color"), &sky_color_override)) {
+				if (uic.ToggleButton(PROTECT("Override Sky Color"), &sky_color_override)) {
 					MEMORY::m_bEnableSkyColorOverride.store(sky_color_override);
 				}
 			}
@@ -402,18 +431,147 @@ private:
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f); // 20px spacing
 
-		if (uic.BeginColumn(xorstr_("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
+		if (uic.BeginColumn(PROTECT("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
 			float total_height = ImGui::GetContentRegionAvail().y;
 			float padding = 6.0f;
 			float frame_height = (total_height - padding);
 
 			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
 				uic.DrawTitle("Configurations");
-				uic.Slider<float>(Protect("Flash Alpha"), &MEMORY::m_flFlashAlpha, 0.0f, 255.0f);
-				uic.Slider<int>(Protect("Camera FOV"), &MEMORY::m_iDefaultFOV, 1, 150);
-				uic.Slider<float>(Protect("Exposure"), &MEMORY::m_flExposure, 0.0f, 1.0f);
-				uic.ColorEditor(Protect("Sky Color"), (ImColor*) & MEMORY::m_clSkyColor);
-				uic.ColorEditor(Protect("Smoke Color"), (ImColor*) & MEMORY::m_clSmokeColor);
+				uic.Slider<float>(PROTECT("Flash Alpha"), &MEMORY::m_flFlashAlpha, 0.0f, 255.0f);
+				uic.Slider<int>(PROTECT("Camera FOV"), &MEMORY::m_iDefaultFOV, 1, 150);
+				uic.Slider<float>(PROTECT("Exposure"), &MEMORY::m_flExposure, 0.0f, 1.0f);
+				uic.ColorEditor(PROTECT("Sky Color"), (ImColor*)&MEMORY::m_clSkyColor);
+				uic.ColorEditor(PROTECT("Smoke Color"), (ImColor*)&MEMORY::m_clSmokeColor);
+			}
+			uic.EndFrame();
+		}
+
+		uic.EndColumn();
+	}
+
+	void CreateMiscSettingsUI() {
+		ImGui::SetCursorPos(ImVec2(220, 70));
+		if (uic.BeginColumn(PROTECT("##left-column"), ImVec2((500.0f / 2.0f), 0))) {
+			float total_height = ImGui::GetContentRegionAvail().y;
+			float padding = 6.0f;
+			float frame_height = (total_height - padding);
+
+			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
+				uic.DrawTitle("Offsets");
+
+				ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 255, 255, 200).Value);
+
+				if (uic.Button("Download Latest", 150.0f, 30.0f)) {
+					std::thread download_thread(&Updater::DownloadOffsets, &Instance<Updater>::Get());
+					download_thread.detach();
+				}
+
+				if (uic.Button("Reload", 150.0f, 30.0f)) {
+					Instance<Updater>::Get().UpdateOffsets();
+				}
+
+				//ImGui::TextWrapped(PROTECT("If you're unable to download/update offsets using the button above,try downloading them manually- from the provided links and put them into- the offsets folder!"));
+
+				ImGui::TextLinkOpenURL(PROTECT("Offsets.json"), "https://raw.githubusercontent.com/a2x/cs2-dumper/refs/heads/main/output/offsets.json");
+				ImGui::TextLinkOpenURL(PROTECT("ClientDll.json"), "https://raw.githubusercontent.com/a2x/cs2-dumper/refs/heads/main/output/client_dll.json");
+				ImGui::TextLinkOpenURL(PROTECT("Buttons.json"), "https://raw.githubusercontent.com/a2x/cs2-dumper/refs/heads/main/output/buttons.json");
+
+				uic.LeaveLine(2);
+				uic.DrawTitle(PROTECT("Settings"));
+
+				uic.ToggleButton(PROTECT("Automatic Update"), &_FLAGS_::m_bAutomaticUpdate);
+				uic.ToggleButton(PROTECT("Show Overlay Texts"), &_FLAGS_::m_bShowText);
+
+				if (uic.Button("Save", 150.0f, 30.0f)) {
+					settings.SaveSettings();
+				}
+
+				ImGui::PopStyleColor();
+			}
+			uic.EndFrame();
+		}
+
+		uic.EndColumn();
+
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f); // 20px spacing
+
+		if (uic.BeginColumn(PROTECT("##right-column"), ImVec2((500.0f / 2.0f), 0))) {
+			float total_height = ImGui::GetContentRegionAvail().y;
+			float padding = 6.0f;
+			float frame_height = (total_height - padding);
+
+			if (uic.BeginFrame(1, ImVec2(0, frame_height - 5.0f))) {
+				uic.DrawTitle("Configs");
+
+				ConfigManager& configs = Instance<ConfigManager>::Get();
+
+				configs.ScanDirectoryForFile(CONFIG_FILE_EXTENSION);
+
+				static char buffer[MAX_BUFFER_SIZE * 2] = "Config Name";
+
+				ImGui::SetNextItemWidth(150.0f);
+				uic.InputBoxWithPlaceholder(PROTECT("##config_name"), "Config Name", buffer, sizeof(buffer));
+
+				if (uic.Button(PROTECT("Save Config"), 150.0f, 30.0f)) {
+					configs.file_name = buffer;
+					configs.CreateConfig();
+				}
+
+				uic.LeaveLine();
+
+				if (uic.Button(PROTECT("Load Config"), 150.0f, 30.0f)) {
+					configs.LoadConfig();
+				}
+
+				uic.LeaveLine();
+
+				if (!configs.ConfigFiles.empty()) {
+					static int SELECTED_CONFIG_INI_FILE_INDEX = 0;
+					std::vector<const char*> config_files_cstr;
+
+					for (unsigned int i = 0; i < configs.ConfigFiles.size(); ++i) {
+						config_files_cstr.push_back(configs.ConfigFiles[i].c_str());
+					}
+
+					std::string SELECTED_FILE_NAME = config_files_cstr[SELECTED_CONFIG_INI_FILE_INDEX];
+					uic.ComboBox(
+						PROTECT(" Select File"),
+						SELECTED_FILE_NAME.c_str(),
+						&SELECTED_CONFIG_INI_FILE_INDEX,
+						config_files_cstr.data(),
+						config_files_cstr.size()
+					);
+					//uic.ComboBox(PROTECT("Select File"), SELECTED_FILE_NAME.c_str(), &SELECTED_CONFIG_INI_FILE_INDEX, config_files_cstr.data(), config_files_cstr.size(), 0.0f);
+					configs.file_name = config_files_cstr[SELECTED_CONFIG_INI_FILE_INDEX];
+
+					if (uic.Button("Delete", 150.0f, 30.0f)) {
+						std::string path = "bin\\configs\\" + configs.file_name;
+						fs::remove(path);
+					}
+				}
+
+				uic.LeaveLine(2);
+
+				uic.DrawTitle("Hotkeys");
+
+				uic.Hotkey(&_FLAGS_::m_iEndProgramKey, ImVec2(130.0f, 25.0f));
+				ImGui::SameLine(0, -2.0f);
+				ImGui::TextColored(ImColor(255,255,255, 200), "Panic Key (Exits)");
+
+				uic.Hotkey(&_FLAGS_::m_iVisibilityToggleKey, ImVec2(130.0f, 25.0f));
+				ImGui::SameLine(0, -2.0f);
+				ImGui::TextColored(ImColor(255, 255, 255, 200), "Visibility Toggle");
+
+				uic.Hotkey(&_FLAGS_::m_iLoadUnloadCheatsKey, ImVec2(130.0f, 25.0f));
+				ImGui::SameLine(0, -2.0f);
+				ImGui::TextColored(ImColor(255, 255, 255, 200), "Load/Unload");
+
+				uic.LeaveLine(1);
+				if (uic.Button("Save", 130.0f, 30.0f)) {
+					settings.SaveSettings();
+				}
 			}
 			uic.EndFrame();
 		}
@@ -430,7 +588,7 @@ public:
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
-		if (ImGui::Begin(xorstr_("Zero Memory | CS2 External"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
+		if (ImGui::Begin(PROTECT("Zero Memory | CS2 External"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
 			uic.WindowPosition = ImGui::GetWindowPos();
 			uic.WindowSize= ImGui::GetWindowSize();
 			uic.CursorPosition = ImGui::GetCursorPos();
@@ -482,7 +640,10 @@ public:
 				2.0f
 			);
 
-			uic.DrawProfile("CR7", (ImTextureID)RES_LOADER::IMAGES::T_ICON);
+			for (int i = 0; i < KAA.user_data.subscriptions.size(); i++) {
+				auto sub = KAA.user_data.subscriptions.at(i);
+				uic.DrawProfile2(LocalPlayer.Name, (LocalPlayer.Team == T_TERRORIST ? T_COLOR : CT_COLOR), tm_to_readable_time(timet_to_tm(string_to_timet(sub.expiry))).c_str());
+			}
 
 			ImGui::PopStyleVar(1);
 
@@ -516,6 +677,7 @@ public:
 			case MISC_SCRIPT:
 				break;
 			case MISC_SETTINGS:
+				this->CreateMiscSettingsUI();
 				break;
 			}
 

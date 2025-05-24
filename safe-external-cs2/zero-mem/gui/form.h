@@ -19,18 +19,18 @@ public:
     Form(const Form&) = delete;
     Form& operator=(const Form&) = delete;
 
-    std::string license_path = xorstr_("bin/License");
+    std::string license_path = PROTECT("bin/License");
 
     char username_buffer[64] = { 0 };
     char password_buffer[64] = { 0 };
     char key_buffer[512] = { 0 };
 
-    std::string logs = xorstr_("");
+    std::string logs = PROTECT("");
 
     bool Exists() {
         if (std::filesystem::exists(this->license_path)) {
-            std::string uname = ReadFromJson(this->license_path, xorstr_("username"));
-            std::string upass = ReadFromJson(this->license_path, xorstr_("password"));
+            std::string uname = ReadFromJson(this->license_path, PROTECT("username"));
+            std::string upass = ReadFromJson(this->license_path, PROTECT("password"));
 
             if (uname.empty() && upass.empty())
                 return false;
@@ -42,8 +42,8 @@ public:
     void ReadData() {
         if (_FLAGS_::m_bRememberME) {
             if (fs::exists(this->license_path)) {
-                std::string uname = ReadFromJson(this->license_path, xorstr_("username"));
-                std::string upass = ReadFromJson(this->license_path, xorstr_("password"));
+                std::string uname = ReadFromJson(this->license_path, PROTECT("username"));
+                std::string upass = ReadFromJson(this->license_path, PROTECT("password"));
 
                 strncpy_s(username_buffer, uname.c_str(), sizeof(username_buffer) - 1);
                 strncpy_s(password_buffer, upass.c_str(), sizeof(password_buffer) - 1);
@@ -54,11 +54,12 @@ public:
     bool RunForm()
     {
         uic.SetStyles();
-        ImGui::SetNextWindowSize(ImVec2(450, 420));
-        if (ImGui::Begin(xorstr_("NoSkill.cc | Loader"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
+        ImGui::SetNextWindowSize(ImVec2(550, 520));
+        if (ImGui::Begin(PROTECT("NoSkill.cc | Loader"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
             ImGui::PushFont(RES_LOADER::FONTS::PANAROMA_UI_FONT);
             uic.SetLogo((ImTextureID)RES_LOADER::IMAGES::NO_SKILL_CC_LOGO, ImVec2(200, 50), 30.0f);
             uic.DrawBorder(ImGui::GetWindowPos(), ImGui::GetWindowSize(), 2.0f, 2.0f, 255.0f);
+            Instance<Particles>::Get().DrawRandomConstellationParticles();
 
             ImVec2 windowSize = ImGui::GetWindowSize();
             float contentWidth = 250.0f;
@@ -70,44 +71,44 @@ public:
             float startX = (windowSize.x - totalButtonsWidth) * 0.5f;
 
             ImGui::SetCursorPos(ImVec2(startX, 100));
-            if (ImGui::Button(xorstr_("Login"), buttonSize)) {
+            if (ImGui::Button(PROTECT("Login"), buttonSize)) {
                 form_index = 0;
                 logs.clear();
             }
 
             ImGui::SameLine();
             ImGui::SetCursorPosX(startX + buttonSize.x + buttonSpacing.x);
-            if (ImGui::Button(xorstr_("Register"), buttonSize)) {
+            if (ImGui::Button(PROTECT("Register"), buttonSize)) {
                 form_index = 1;
                 logs.clear();
             }
 
             ImGui::SetCursorPos(ImVec2(centerX, 160));
             ImGui::PushItemWidth(contentWidth);
-            uic.InputBoxWithPlaceholder(xorstr_("##Username"), xorstr_("Username"), username_buffer, IM_ARRAYSIZE(username_buffer), (this->show_username ? 0 : ImGuiInputTextFlags_Password));
+            uic.InputBoxWithPlaceholder(PROTECT("##Username"), PROTECT("Username"), username_buffer, IM_ARRAYSIZE(username_buffer), (this->show_username ? 0 : ImGuiInputTextFlags_Password));
             ImGui::SameLine();
             ImGui::PushID(1);
             uic.Checkbox("##", &this->show_username);
             ImGui::PopID();
 
             ImGui::SetCursorPos(ImVec2(centerX, ImGui::GetCursorPosY() + 10));
-            uic.InputBoxWithPlaceholder(xorstr_("##Password"), xorstr_("Password"), password_buffer, IM_ARRAYSIZE(password_buffer), (this->show_password ? 0 : ImGuiInputTextFlags_Password));
+            uic.InputBoxWithPlaceholder(PROTECT("##Password"), PROTECT("Password"), password_buffer, IM_ARRAYSIZE(password_buffer), (this->show_password ? 0 : ImGuiInputTextFlags_Password));
             ImGui::SameLine();
             uic.Checkbox("##", &this->show_password);
 
             if (form_index == 0) { // login form
                 ImGui::SetCursorPos(ImVec2(centerX, ImGui::GetCursorPosY() + 15));
-                uic.Checkbox("Remember me", &_FLAGS_::m_bRememberME);
+                uic.Checkbox(PROTECT("Remember me"), &_FLAGS_::m_bRememberME);
                 ImGui::SetCursorPos(ImVec2(centerX, ImGui::GetCursorPosY() + 20));
-                if (ImGui::Button(xorstr_("Login!"), ImVec2(contentWidth, 35)))
+                if (ImGui::Button(PROTECT("Login!"), ImVec2(contentWidth, 35)))
                 {
                     KAA.login(username_buffer, password_buffer);
                     if (!KAA.response.success)
                     {
                         //std::remove(this->key_file_path.c_str());
                         logs = KAA.response.message;
-                        if (logs == xorstr_("Invalid username")) {
-                            logs = xorstr_("Invalid username or password");
+                        if (logs == PROTECT("Invalid username")) {
+                            logs = PROTECT("Invalid username or password");
                         }
                         if (!logs.empty()) {
                             uic.CenterText(logs.c_str(), 50.0f, ImColor(255, 255, 255));
@@ -118,8 +119,8 @@ public:
                     }
                     else
                     {
-                        WriteToJson(this->license_path, xorstr_("username"), username_buffer, true, xorstr_("password"), password_buffer);
-                        logs = xorstr_("Logging-in!");
+                        WriteToJson(this->license_path, PROTECT("username"), username_buffer, true, PROTECT("password"), password_buffer);
+                        logs = PROTECT("Logging-in!");
                         if (!logs.empty()) {
                             uic.CenterText(logs.c_str(), 50.0f, ImColor(255, 255, 255));
                         }
@@ -131,13 +132,13 @@ public:
             }
             else if (form_index == 1) { // register form
                 ImGui::SetCursorPos(ImVec2(centerX, ImGui::GetCursorPosY() + 10));
-                uic.InputBoxWithPlaceholder(xorstr_("##Key"), xorstr_("Key"), key_buffer, IM_ARRAYSIZE(key_buffer), (this->show_key ? 0 : ImGuiInputTextFlags_Password));
+                uic.InputBoxWithPlaceholder(PROTECT("##Key"), PROTECT("Key"), key_buffer, IM_ARRAYSIZE(key_buffer), (this->show_key ? 0 : ImGuiInputTextFlags_Password));
                 ImGui::SameLine();
                 ImGui::PushID(2);
                 uic.Checkbox("##", &this->show_key);
                 ImGui::PopID();
                 ImGui::SetCursorPos(ImVec2(centerX, ImGui::GetCursorPosY() + 15));
-                if (ImGui::Button(xorstr_("Register!"), ImVec2(contentWidth, 35)))
+                if (ImGui::Button(PROTECT("Register!"), ImVec2(contentWidth, 35)))
                 {
                     KAA.regstr(username_buffer, password_buffer, key_buffer);
 
@@ -151,8 +152,8 @@ public:
                     }
                     else
                     {
-                        logs = xorstr_("Successfully Registered! Now Login!");
-                        WriteToJson(this->license_path, xorstr_("username"), username_buffer, true, xorstr_("password"), password_buffer);
+                        logs = PROTECT("Successfully Registered! Now Login!");
+                        WriteToJson(this->license_path, PROTECT("username"), username_buffer, true, PROTECT("password"), password_buffer);
                     }
                 }
             }

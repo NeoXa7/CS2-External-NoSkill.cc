@@ -190,10 +190,10 @@ public:
 		}
 	}
 
+	// thanks CHAT-GPT :)
 	bool Button(const char* label, float width, float height) {
 		static std::unordered_map<ImGuiID, float> hoverAnimMap;
 
-		// Extract visual label (everything before "##")
 		std::string fullLabel(label);
 		std::string visibleLabel = fullLabel.substr(0, fullLabel.find("##"));
 
@@ -213,9 +213,10 @@ public:
 		ImVec4 base = ImLerp(NormalButtonColor.Value, NormalButtonColorHovered.Value, anim);
 		ImColor bg = ImColor(base);
 
+		ImDrawList* DrawList = ImGui::GetWindowDrawList(); // ✅ Correct draw list
 		DrawList->AddRectFilled(cursor, ImVec2(cursor.x + width, cursor.y + height), bg, 6.0f);
 
-		// Centered text
+		// Draw centered label text
 		ImVec2 textSize = ImGui::CalcTextSize(visibleLabel.c_str());
 		ImVec2 textPos = ImVec2(
 			cursor.x + (width - textSize.x) * 0.5f,
@@ -224,46 +225,57 @@ public:
 		DrawList->AddText(textPos, IM_COL32(255, 255, 255, 255), visibleLabel.c_str());
 
 		ImGui::PopID();
-
 		return clicked;
 	}
 
 	void DrawProfile(const char* name, ImTextureID image, const char* license_date = "TILL: 03.10 22:41") {
-		ImGui::BeginGroup();
 
-		ImGui::SetCursorPos(ImVec2(20, 470)); // Move full block
-		ImVec2 cursor = ImGui::GetCursorScreenPos();
+		ImGui::SetCursorPos(ImVec2(20, 470));
+		if(this->BeginColumn("##profile##", ImVec2(200.0f, 50.0f))) {
+			ImVec2 cursor = ImGui::GetCursorScreenPos();
 
-		float avatarSize = 40.0f;
-		float radius = avatarSize / 2.0f;
-		ImVec2 center = ImVec2(cursor.x + radius, cursor.y + radius);
+			float avatarSize = 40.0f;
+			float radius = avatarSize / 2.0f;
+			ImVec2 center = ImVec2(cursor.x + radius, cursor.y + radius);
 
-		ImGui::GetWindowDrawList()->AddCircleFilled(center, radius, IM_COL32(20, 20, 20, 200));
-		ImGui::SetCursorScreenPos(cursor);
-		ImGui::Image(image, ImVec2(avatarSize, avatarSize));
+			ImGui::GetWindowDrawList()->AddCircleFilled(center, radius, IM_COL32(20, 20, 20, 200));
+			ImGui::SetCursorScreenPos(cursor);
+			ImGui::Image(image, ImVec2(avatarSize, avatarSize));
 
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 8.0f);
+			ImGui::SetCursorPos(ImVec2(45.0f, 0.0f));
+			ImGui::TextColored(ImColor(255, 255, 255, 200), "%s", name);
 
-		ImGui::BeginGroup();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
-		ImGui::Text("%s", name);
+			ImGui::SetCursorPos(ImVec2(45.0f, 20.0f));
+			ImGui::TextColored(ImColor(255, 255, 255, 200), "%s", license_date);
+		}
 
-		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 70, 70, 255));
-		ImGui::Text("%s", license_date);
-		ImGui::PopStyleColor();
-		ImGui::EndGroup();
+		this->EndColumn();
+	}
+	
+	void DrawProfile2(const char* name, ImColor name_text_color, const char* license_date = "TILL: 03.10 22:41") {
+		ImGui::SetCursorPos(ImVec2(20, 470));
 
-		ImGui::EndGroup();
+		if (this->BeginColumn("##profile##", ImVec2(200.0f, 60.0f))) {
+			// Name line with label
+			ImGui::SetCursorPos(ImVec2(45.0f, 5.0f));
+			ImGui::TextColored(name_text_color, "User : %s", name);
+
+			// License expiration
+			ImGui::SetCursorPos(ImVec2(3.0f, 25.0f));
+			ImGui::TextColored(ImColor(255, 255, 255, 200), "Expire : %s", license_date);
+
+			this->EndColumn();
+		}
 	}
 
 	void DrawTitle(const char* name) {
-		this->CenterText(name, -2.0f, ImColor(255, 255, 255, 105));
-		ImGui::Dummy(ImVec2(0, 5.0f));
+		this->CenterText(name, 0.0f, ImColor(255, 255, 255, 105));
+		ImGui::Dummy(ImVec2(0, 0.0f));
 		ImGui::Separator();
 		ImGui::Dummy(ImVec2(0, 10.0f));
 	}
 
+	// thanks CHAT-GPT :)
 	bool ToggleButton(const char* label, bool* value, float width = 40.0f, float height = 20.0f)
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -327,127 +339,6 @@ public:
 		return clicked;
 	}
 
-	void SetLogo(ImTextureID image, ImVec2 size, float y_padding = 15.0f) {
-
-		ImGui::SetCursorPosY(CursorPosition.y + y_padding);
-		ImGui::SetCursorPosX((ImGui::GetContentRegionAvail().x / 2) - (size.x / 2));
-		ImGui::Image(image, size);
-		ImGui::SetCursorPos(CursorPosition);
-	}
-
-	// slightly modified version of : https://youtu.be/2B_qzPHV4MQ?t=854 (exact time line set)
-	void CenterButtons(std::vector<std::string> button_names, std::vector<int> button_index, int& selected_index) {
-		std::vector<ImVec2> vsizes = {};
-		float total_area = 0.0f;
-
-		const auto& styles = ImGui::GetStyle();
-
-		// Calculate total size for centering
-		for (const std::string& name : button_names) {
-			ImVec2 label_size = ImGui::CalcTextSize(name.c_str(), 0, true);
-			ImVec2 size = ImGui::CalcItemSize(ImVec2(), label_size.x + styles.FramePadding.x * 2.0f, label_size.y + styles.FramePadding.y * 2.0f);
-			size.x += 45.5f;
-			size.y += 15.0f;
-
-			vsizes.push_back(size);
-			total_area += size.x;
-		}
-
-		ImGui::SameLine((ImGui::GetContentRegionAvail().x / 2) - (total_area / 2));
-
-		for (size_t i = 0; i < button_names.size(); ++i) {
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 85);
-			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.0f);
-
-			bool is_selected = selected_index == button_index[i];
-
-			if (is_selected) {
-				ImGui::PushStyleColor(ImGuiCol_Button, ImColor(VerticalButtonColor.Value.x, VerticalButtonColor.Value.y, VerticalButtonColor.Value.z, 255.0f).Value);
-			}
-			else {
-				ImGui::PushStyleColor(ImGuiCol_Button, VerticalButtonColor.Value);
-			}
-
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, VerticalButtonColorHovered.Value);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, VerticalButtonColorActive.Value);
-
-			if (ImGui::Button(button_names[i].c_str(), vsizes[i])) {
-				selected_index = button_index[i];
-			}
-
-			ImGui::PopStyleColor(3);
-			ImGui::PopStyleVar();
-
-			if (i != button_names.size() - 1) {
-				ImGui::SameLine();
-			}
-		}
-	}
-
-	// slightly modified version of : https://youtu.be/2B_qzPHV4MQ?t=854
-	void CenterText(const char* format, const float y_padding, ImColor color) {
-		const ImVec2 text_size = ImGui::CalcTextSize(format);
-		ImGui::SameLine((ImGui::GetContentRegionAvail().x / 2) - (text_size.x / 2));
-
-		if (y_padding > 0.0f)
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + y_padding);
-		ImGui::TextColored(color, format);
-	}
-
-	void GradientSeperator(float seperator_height = 2.0f, float alpha = 255.0f) {
-		ImVec2 p1 = ImGui::GetCursorScreenPos();
-		float width = ImGui::GetWindowSize().x;
-
-		ImVec2 p2 = ImVec2(p1.x + width, p1.y + seperator_height);
-
-		ImGui::GetWindowDrawList()->AddRectFilledMultiColor(
-			p1, p2,
-			IM_COL32(255, 0, 0, static_cast<int>(alpha)),   // left: red
-			IM_COL32(0, 255, 0, static_cast<int>(alpha)),   // right: green
-			IM_COL32(0, 0, 255, static_cast<int>(alpha)),   // left bottom: blue
-			IM_COL32(255, 255, 0, static_cast<int>(alpha))  // right bottom: yellow
-		);
-
-		ImGui::Dummy(ImVec2(0.0f, seperator_height + 2.0f));
-	}
-
-	bool BeginColumn(const char* id, ImVec2 size, int window_flag = 1) {
-		ImGui::PushStyleColor(0, ImColor(247, 101, 175, 100).Value);
-		return ImGui::BeginChild(id, size, window_flag);
-	}
-
-	void EndColumn() {
-		ImGui::EndChild();
-		ImGui::PopStyleColor();
-	}
-
-	bool BeginFrame(ImGuiID id, ImVec2 size, int window_flag = 0) {
-		ImGui::PushStyleColor(ImGuiCol_Border, ImColor(255, 255, 255, 100).Value);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
-		return ImGui::BeginChildFrame(id, size, window_flag);
-	}
-
-	void EndFrame() {
-		ImGui::EndChildFrame();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleVar();
-	}
-
-	void Checkbox(const char* format, bool* value) {
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, CheckboxColorFalse.Value);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, CheckboxColorHovered.Value);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, CheckboxColorHovered.Value);
-		ImGui::PushStyleColor(ImGuiCol_CheckMark, CheckMarkColor.Value);
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.5f, 3.5f));
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
-
-		ImGui::Checkbox(format, value);
-
-		ImGui::PopStyleColor(4);
-		ImGui::PopStyleVar(2);
-	}
-
 	void ColorEditor(const char* label, ImColor* color, float width = 20.0f, float height = 16.0f, float roundness = 2.0f)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, roundness);
@@ -479,28 +370,6 @@ public:
 
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(5);
-	}
-
-	void ColorEditor2(const char* label, ImColor* color, float width = 190.0f, float roundness = 2.0f)
-	{
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, roundness);
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.5f, 3.5f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ColorEditorColor.Value);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ColorEditorColorHovered.Value);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ColorEditorColorActive.Value);
-		ImGui::PushStyleColor(ImGuiCol_Border, ImColor(10, 10, 10, 255).Value);
-
-		ImGui::SetNextItemWidth(width);
-
-		// Prepare to push text color
-		bool active = ImGui::IsItemActive(); // still false here, so ignore
-		ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 255, 255, 200).Value); // default
-		ImGui::ColorEdit3(label, (float*)color);
-		ImGui::PopStyleColor(); // text color
-
-		ImGui::PopStyleVar(3);
-		ImGui::PopStyleColor(4);
 	}
 
 	template <typename T>
@@ -646,50 +515,267 @@ public:
 		}
 	}
 
-	bool ComboBox(const char* label, const char* combo_items, int* current_index, const char* items[], int items_size, float roundness = 3.0f, float width = 200.0f)
+	bool ComboBox(const char* label, const char* preview_value, int* currentIndex, const char* items[], int items_count, float width = 150.0f, float height = 30.0f)
 	{
+		static std::unordered_map<ImGuiID, float> openAnimProgress;
+		static std::unordered_map<ImGuiID, bool> comboState;
+
+		ImGui::PushID(label);
+
+		ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 255, 255, 255).Value);
 		ImGui::Text(label);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ComboBoxColor.Value);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ComboBoxActiveColor.Value);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ComboBoxHoverColor.Value);
+		ImGui::PopStyleColor(1);
 
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, roundness);
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		ImGui::InvisibleButton("##combo", ImVec2(width, height));
+		ImGuiID id = ImGui::GetID(label);
 
-		ImGui::SetNextItemWidth(width);
-		bool is_open = ImGui::BeginCombo("##", combo_items);
+		// Get draw list of the current window
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-		if (is_open)
+		// Handle open/close toggle
+		bool& isOpen = comboState[id];
+		if (ImGui::IsItemClicked())
+			isOpen = !isOpen;
+
+		// Animate dropdown open progress
+		float& anim = openAnimProgress[id];
+		float animSpeed = 10.0f * ImGui::GetIO().DeltaTime;
+		anim = ImClamp(anim + (isOpen ? animSpeed : -animSpeed), 0.0f, 1.0f);
+
+		// Draw main combo box background
+		drawList->AddRectFilled(pos, ImVec2(pos.x + width, pos.y + height), ImColor(23, 23, 23, 255), 6.0f);
+
+		// Draw preview/selected item text
+		if (preview_value)
 		{
-			for (int i = 0; i < items_size; ++i)
-			{
-				bool is_selected = (i == *current_index);
-				if (is_selected)
-				{
-					ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 215, 0).Value);
-				}
-
-				if (ImGui::Selectable(items[i], is_selected))
-				{
-					*current_index = i;
-				}
-
-				if (is_selected)
-				{
-					ImGui::SetItemDefaultFocus();
-				}
-
-				if (is_selected)
-				{
-					ImGui::PopStyleColor();
-				}
-			}
-			ImGui::EndCombo();
+			ImVec2 textSize = ImGui::CalcTextSize(preview_value);
+			drawList->AddText(ImVec2(pos.x + 10, pos.y + (height - textSize.y) * 0.5f), ImColor(255, 255, 255), preview_value);
 		}
 
-		ImGui::PopStyleVar(1);
-		ImGui::PopStyleColor(3);
+		// Draw dropdown arrow
+		drawList->AddTriangleFilled(
+			ImVec2(pos.x + width - 18, pos.y + height / 2 - 3),
+			ImVec2(pos.x + width - 10, pos.y + height / 2 - 3),
+			ImVec2(pos.x + width - 14, pos.y + height / 2 + 3),
+			ImColor(255, 255, 255, 200)
+		);
 
-		return is_open;
+		// Dropdown max height (max 5 items visible)
+		float maxDropdownHeight = height * ImMin(items_count, 5);
+		float visibleHeight = maxDropdownHeight * anim;
+
+		bool changed = false;
+
+		if (visibleHeight > 0.1f)
+		{
+			ImVec2 dropdownPos = ImVec2(pos.x, pos.y + height);
+
+			// Draw dropdown background with rounded corners
+			drawList->AddRectFilled(dropdownPos, ImVec2(dropdownPos.x + width, dropdownPos.y + visibleHeight), ImColor(23, 23, 23, 255), 6.0f);
+
+			// Set cursor inside dropdown area
+			ImGui::SetCursorScreenPos(dropdownPos);
+
+			ImGui::BeginChild((std::string("##dropdown") + label).c_str(), ImVec2(width, visibleHeight), true);
+
+			// Use child window draw list for custom drawing inside dropdown
+			ImDrawList* childDrawList = ImGui::GetWindowDrawList();
+
+			for (int i = 0; i < items_count; ++i)
+			{
+				ImGui::PushID(i);
+
+				ImVec2 itemPos = ImGui::GetCursorScreenPos();
+				ImVec2 itemSize = ImVec2(width, height);
+
+				ImGui::InvisibleButton("##item", itemSize);
+
+				bool hovered = ImGui::IsItemHovered();
+				bool selected = (i == *currentIndex);
+
+				if (ImGui::IsItemClicked())
+				{
+					*currentIndex = i;
+					isOpen = false;
+					changed = true;
+				}
+
+				// Background color: highlight if hovered or selected
+				ImColor bgColor;
+				if (selected)
+					bgColor = ImColor(70, 70, 70, 255);
+				else if (hovered)
+					bgColor = ImColor(50, 50, 50, 255);
+				else
+					bgColor = ImColor(36, 36, 36, 255);
+
+				childDrawList->AddRectFilled(itemPos, ImVec2(itemPos.x + width, itemPos.y + height), bgColor, 6.0f);
+
+				// Draw item text
+				childDrawList->AddText(ImVec2(itemPos.x + 10, itemPos.y + (height - ImGui::GetFontSize()) * 0.5f), ImColor(255, 255, 255), items[i]);
+
+				ImGui::PopID();
+			}
+
+			ImGui::EndChild();
+
+			// Reset cursor pos to avoid layout issues
+			ImGui::SetCursorScreenPos(ImVec2(pos.x, pos.y + height));
+		}
+
+		ImGui::PopID();
+
+		return changed;
+	}
+
+	// ---------------------------->
+	// 
+	//	OLD SHITS BELOW
+	//
+	// ---------------------------->
+
+	void SetLogo(ImTextureID image, ImVec2 size, float y_padding = 15.0f) {
+
+		ImGui::SetCursorPosY(CursorPosition.y + y_padding);
+		ImGui::SetCursorPosX((ImGui::GetContentRegionAvail().x / 2) - (size.x / 2));
+		ImGui::Image(image, size);
+		ImGui::SetCursorPos(CursorPosition);
+	}
+
+	// slightly modified version of : https://youtu.be/2B_qzPHV4MQ?t=854 (exact time line set)
+	void CenterButtons(std::vector<std::string> button_names, std::vector<int> button_index, int& selected_index) {
+		std::vector<ImVec2> vsizes = {};
+		float total_area = 0.0f;
+
+		const auto& styles = ImGui::GetStyle();
+
+		// Calculate total size for centering
+		for (const std::string& name : button_names) {
+			ImVec2 label_size = ImGui::CalcTextSize(name.c_str(), 0, true);
+			ImVec2 size = ImGui::CalcItemSize(ImVec2(), label_size.x + styles.FramePadding.x * 2.0f, label_size.y + styles.FramePadding.y * 2.0f);
+			size.x += 45.5f;
+			size.y += 15.0f;
+
+			vsizes.push_back(size);
+			total_area += size.x;
+		}
+
+		ImGui::SameLine((ImGui::GetContentRegionAvail().x / 2) - (total_area / 2));
+
+		for (size_t i = 0; i < button_names.size(); ++i) {
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 85);
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.0f);
+
+			bool is_selected = selected_index == button_index[i];
+
+			if (is_selected) {
+				ImGui::PushStyleColor(ImGuiCol_Button, ImColor(VerticalButtonColor.Value.x, VerticalButtonColor.Value.y, VerticalButtonColor.Value.z, 255.0f).Value);
+			}
+			else {
+				ImGui::PushStyleColor(ImGuiCol_Button, VerticalButtonColor.Value);
+			}
+
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, VerticalButtonColorHovered.Value);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, VerticalButtonColorActive.Value);
+
+			if (ImGui::Button(button_names[i].c_str(), vsizes[i])) {
+				selected_index = button_index[i];
+			}
+
+			ImGui::PopStyleColor(3);
+			ImGui::PopStyleVar();
+
+			if (i != button_names.size() - 1) {
+				ImGui::SameLine();
+			}
+		}
+	}
+
+	// slightly modified version of : https://youtu.be/2B_qzPHV4MQ?t=854
+	void CenterText(const char* format, const float y_padding, ImColor color) {
+		const ImVec2 text_size = ImGui::CalcTextSize(format);
+		ImGui::SameLine((ImGui::GetContentRegionAvail().x / 2) - (text_size.x / 2));
+
+		if (y_padding > 0.0f)
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + y_padding);
+		ImGui::TextColored(color, format);
+	}
+
+	void GradientSeperator(float seperator_height = 2.0f, float alpha = 255.0f) {
+		ImVec2 p1 = ImGui::GetCursorScreenPos();
+		float width = ImGui::GetWindowSize().x;
+
+		ImVec2 p2 = ImVec2(p1.x + width, p1.y + seperator_height);
+
+		ImGui::GetWindowDrawList()->AddRectFilledMultiColor(
+			p1, p2,
+			IM_COL32(255, 0, 0, static_cast<int>(alpha)),   // left: red
+			IM_COL32(0, 255, 0, static_cast<int>(alpha)),   // right: green
+			IM_COL32(0, 0, 255, static_cast<int>(alpha)),   // left bottom: blue
+			IM_COL32(255, 255, 0, static_cast<int>(alpha))  // right bottom: yellow
+		);
+
+		ImGui::Dummy(ImVec2(0.0f, seperator_height + 2.0f));
+	}
+
+	bool BeginColumn(const char* id, ImVec2 size, int window_flag = 1) {
+		ImGui::PushStyleColor(0, ImColor(247, 101, 175, 100).Value);
+		return ImGui::BeginChild(id, size, window_flag);
+	}
+
+	void EndColumn() {
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
+	}
+
+	bool BeginFrame(ImGuiID id, ImVec2 size, int window_flag = 0) {
+		ImGui::PushStyleColor(ImGuiCol_Border, ImColor(255, 255, 255, 100).Value);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
+		return ImGui::BeginChildFrame(id, size, window_flag);
+	}
+
+	void EndFrame() {
+		ImGui::EndChildFrame();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
+	}
+
+	void Checkbox(const char* format, bool* value) {
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, CheckboxColorFalse.Value);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, CheckboxColorHovered.Value);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, CheckboxColorHovered.Value);
+		ImGui::PushStyleColor(ImGuiCol_CheckMark, CheckMarkColor.Value);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.5f, 3.5f));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
+
+		ImGui::Checkbox(format, value);
+
+		ImGui::PopStyleColor(4);
+		ImGui::PopStyleVar(2);
+	}
+
+	void ColorEditor2(const char* label, ImColor* color, float width = 190.0f, float roundness = 2.0f)
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, roundness);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.5f, 3.5f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ColorEditorColor.Value);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ColorEditorColorHovered.Value);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ColorEditorColorActive.Value);
+		ImGui::PushStyleColor(ImGuiCol_Border, ImColor(10, 10, 10, 255).Value);
+
+		ImGui::SetNextItemWidth(width);
+
+		// Prepare to push text color
+		bool active = ImGui::IsItemActive(); // still false here, so ignore
+		ImGui::PushStyleColor(ImGuiCol_Text, ImColor(255, 255, 255, 200).Value); // default
+		ImGui::ColorEdit3(label, (float*)color);
+		ImGui::PopStyleColor(); // text color
+
+		ImGui::PopStyleVar(3);
+		ImGui::PopStyleColor(4);
 	}
 
 	bool InputBoxWithPlaceholder(const char* label, const char* placeholder, char* buf, size_t buf_size, ImGuiInputTextFlags flags = 0)

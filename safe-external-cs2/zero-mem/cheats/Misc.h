@@ -9,16 +9,16 @@ namespace MISC {
 
 namespace CROSSHAIR {
 	inline bool m_bEnableCrosshair = true;
-	inline float CrossHairSize = 10.0f;
-	inline ImColor CrossHairColor = ImColor(0, 255, 0);
+	inline float m_flCrossHairSize = 10.0f;
+	inline ImColor m_clCrossHairColor = ImColor(0, 255, 0);
 
 	void DRAW() {
 		if (m_bEnableCrosshair) {
 			Vector2 SightPos = Vector2(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
-			Utils::Draw::Line({ SightPos.x - CrossHairSize,SightPos.y }, { SightPos.x + CrossHairSize,SightPos.y }, 1, CrossHairColor);
-			Utils::Draw::Line({ SightPos.x,SightPos.y - CrossHairSize }, { SightPos.x ,SightPos.y + CrossHairSize }, 1, CrossHairColor);
-			Utils::Draw::Line({ SightPos.x,SightPos.y - CROSSHAIR::CrossHairSize }, { SightPos.x ,SightPos.y + CROSSHAIR::CrossHairSize }, 1, CROSSHAIR::CrossHairColor);
-			Utils::Draw::Line({ SightPos.x,SightPos.y - CROSSHAIR::CrossHairSize }, { SightPos.x ,SightPos.y + CROSSHAIR::CrossHairSize }, 1, CROSSHAIR::CrossHairColor);
+			Utils::Draw::Line({ SightPos.x - m_flCrossHairSize,SightPos.y }, { SightPos.x + m_flCrossHairSize,SightPos.y }, 1, m_clCrossHairColor);
+			Utils::Draw::Line({ SightPos.x,SightPos.y - m_flCrossHairSize }, { SightPos.x ,SightPos.y + m_flCrossHairSize }, 1, m_clCrossHairColor);
+			Utils::Draw::Line({ SightPos.x,SightPos.y - CROSSHAIR::m_flCrossHairSize }, { SightPos.x ,SightPos.y + CROSSHAIR::m_flCrossHairSize }, 1, CROSSHAIR::m_clCrossHairColor);
+			Utils::Draw::Line({ SightPos.x,SightPos.y - CROSSHAIR::m_flCrossHairSize }, { SightPos.x ,SightPos.y + CROSSHAIR::m_flCrossHairSize }, 1, CROSSHAIR::m_clCrossHairColor);
 		}
 	}
 }

@@ -1,14 +1,14 @@
 #include "Aimbot.h"
 #include <utils/process.h>
 
-namespace Aimbot {
+namespace AIMBOT {
 	Vector2 FindClosest(std::vector<CEntity>& list) {
 		Vector2 ClosestEntity = { 0, 0 };
 		Vector2 COS(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 		float lowest_distance = 10000.0f;
 
 		for (auto& entity : list) {
-			if (entity.Team == LocalPlayer.Team && Aimbot::m_bEnableTeamCheck)
+			if (entity.Team == LocalPlayer.Team && AIMBOT::m_bEnableTeamCheck)
 				continue;
 
 			if (entity.Health <= 0)
@@ -19,7 +19,7 @@ namespace Aimbot {
 			Instance<CWeapon>::Get().Update();
 
 			if (Instance<CWeapon>::Get().GetEquippedWeapon() == "awp" || Instance<CWeapon>::Get().GetEquippedWeapon() == "ssg08") {
-				if (Aimbot::m_bEnableSniperScopeCheck && !LocalPlayer.IsScoped)
+				if (AIMBOT::m_bEnableSniperScopeCheck && !LocalPlayer.IsScoped)
 					continue;
 			}
 
@@ -28,7 +28,7 @@ namespace Aimbot {
 				Instance<CWeapon>::Get().GetEquippedWeapon() == "aug" ||
 				Instance<CWeapon>::Get().GetEquippedWeapon() == "sg553") 
 			{
-				if (Aimbot::m_bEnableSniperRifleScopeCheck && !LocalPlayer.IsScoped)
+				if (AIMBOT::m_bEnableSniperRifleScopeCheck && !LocalPlayer.IsScoped)
 					continue;
 			}
 
@@ -59,8 +59,8 @@ namespace Aimbot {
 			float PixelDistance = entity.HeadPosition2D.Distance(Vector2(SCREEN_CENTER_X, SCREEN_CENTER_Y));
 			float distance = sqrt(pow(AimPosition2D.x - COS.x, 2) + pow(AimPosition2D.y - COS.y, 2));
 
-			if (Aimbot::m_bFovBased) {
-				if (PixelDistance < Aimbot::m_flFOV) {
+			if (AIMBOT::m_bFovBased) {
+				if (PixelDistance < AIMBOT::m_flFOV) {
 					if (!AimPosition2D.IsZero()) {
 						if (distance < lowest_distance)
 						{
@@ -91,7 +91,7 @@ namespace Aimbot {
 		Vector2 screenCenter((float)GetSystemMetrics(SM_CXSCREEN) / 2.0f,
 			(float)GetSystemMetrics(SM_CYSCREEN) / 2.0f);
 
-		Vector2 delta = (target - screenCenter) / Aimbot::m_flSmoothness;
+		Vector2 delta = (target - screenCenter) / AIMBOT::m_flSmoothness;
 
 		INPUT input = { 0 };
 		input.type = INPUT_MOUSE;
@@ -104,25 +104,25 @@ namespace Aimbot {
 
 
 	void RUN(std::vector<CEntity>& list) {
-		if (!Aimbot::m_bEnableAimbot)
+		if (!AIMBOT::m_bEnableAimbot)
 			return;
 
 		if (!Instance<Process>::Get().InForeground("Counter-Strike 2"))
 			return;
 
-		if (Aimbot::m_bShowFovCircle && Aimbot::m_bFovBased) {
-			Utils::Draw::Circle(SCREEN_CENTER_X, SCREEN_CENTER_Y, Aimbot::m_flFOV, m_flFOVCircleThickness, 0, Aimbot::m_clFOVCircleColor);
+		if (AIMBOT::m_bShowFovCircle && AIMBOT::m_bFovBased) {
+			Utils::Draw::Circle(SCREEN_CENTER_X, SCREEN_CENTER_Y, AIMBOT::m_flFOV, m_flFOVCircleThickness, 0, AIMBOT::m_clFOVCircleColor);
 		}
 
-		Aimbot::m_imAimbotMode = (Aimbot::m_iCurrentAimbotModeIndex == 0) ? AUTO : HOLD;
+		AIMBOT::m_imAimbotMode = (AIMBOT::m_iCurrentAimbotModeIndex == 0) ? AUTO : HOLD;
 
-		if (Aimbot::m_imAimbotMode == HOLD) {
-			if (GetAsyncKeyState(Aimbot::m_iCurrentKEY)) {
-				Aimbot::Move(Aimbot::FindClosest(list));
+		if (AIMBOT::m_imAimbotMode == HOLD) {
+			if (GetAsyncKeyState(AIMBOT::m_iCurrentKEY)) {
+				AIMBOT::Move(AIMBOT::FindClosest(list));
 			}
 		}
-		else if (Aimbot::m_imAimbotMode == AUTO) {
-			Aimbot::Move(Aimbot::FindClosest(list));
+		else if (AIMBOT::m_imAimbotMode == AUTO) {
+			AIMBOT::Move(AIMBOT::FindClosest(list));
 		}
 	}
 }
