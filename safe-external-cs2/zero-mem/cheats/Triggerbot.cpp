@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "Triggerbot.h"
 
 namespace TRIGGER_BOT {

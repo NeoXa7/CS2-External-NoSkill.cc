@@ -16,7 +16,7 @@ private:
     pNtWriteVirtualMemory VWrite = nullptr;
 
 public:
-    Memory(const char* process_name)
+    Memory(const wchar_t* process_name)
     {
         HMODULE hNtdll = GetModuleHandleA("ntdll.dll");
         if (!hNtdll)

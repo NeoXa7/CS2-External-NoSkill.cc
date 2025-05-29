@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "CWeapon.h"
 
 void CWeapon::Update() {

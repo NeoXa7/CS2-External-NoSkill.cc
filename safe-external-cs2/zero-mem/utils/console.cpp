@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "console.h"
 
 namespace Console

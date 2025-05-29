@@ -75,16 +75,16 @@ private:
 		RES_LOADER::LoadFonts();
 		RES_LOADER::LoadImages();
 
-		KAA.init();
+		/*KAA.init();
 		if (!KAA.response.success)
 		{
 			Console::SetConsoleTextColor(RED);
 			std::cout << PROTECT(" [NoSkill.cc] Status: ") << KAA.response.message;
 			std::cin.get();
-		}
+		}*/
 
 		// Login Loop
-		bool loggedIn = false;
+		/*bool loggedIn = false;
 
 		m_Form.ReadData();
 
@@ -99,15 +99,15 @@ private:
 			loggedIn = m_Form.RunForm();
 
 			DX11.EndRender();
-		}
+		}*/
 
 		settings.LoadSettings();
 
-		std::thread run(checkAuthenticated, ownerid);
-		std::thread check(sessionStatus);
+		/*std::thread run(checkAuthenticated, ownerid);
+		std::thread check(sessionStatus);*/
 
-		if (!m_Form.Exists())
-			return;
+		/*if (!m_Form.Exists())
+			return;*/
 
 		bool is_update_needed = false;
 
@@ -177,17 +177,17 @@ private:
 				_FLAGS_::m_bEnableCheats = !_FLAGS_::m_bEnableCheats;
 			}
 
-			if (KAA.user_data.hwid.empty() || KAA.user_data.ip.empty() || KAA.user_data.username.empty()) {
-				exit(0);
-			}
+			//if (KAA.user_data.hwid.empty() || KAA.user_data.ip.empty() || KAA.user_data.username.empty()) {
+			//	exit(0);
+			//}
 
 			SourceEngine.UpdateEngine();
 
 			std::lock_guard<std::mutex> lock(SourceEngine.GetEntityListMutex());
 			auto& list = SourceEngine.GetEntityListRef();
 
-			if (!m_Form.Exists())
-				return;
+			//if (!m_Form.Exists())
+			//	return;
 
 			if (IsDebuggerPresent()) {
 				exit(0);
@@ -223,7 +223,7 @@ public:
 			exit(0);
 		}
 
-		/*SourceEngine.ProcessID = m_KernelProcessManager.GetProcessID("cs2.exe");
+		SourceEngine.ProcessID = m_ProcessManager.GetProcessID(L"cs2.exe");
 
 		if (!SourceEngine.ProcessID) {
 			LI_FN(printf).get()(PROTECT(" [NoSkill.cc] Failed to get Process ID of Process (", m_SourceEngine.ProcessName, ") : ", m_SourceEngine.ProcessID, '\n'));
@@ -246,11 +246,6 @@ public:
 				this->MainLoop();
 			}
 		}
-
-		*/
-
-		this->MainLoop();
-
 		std::cin.get();
 	}
 };

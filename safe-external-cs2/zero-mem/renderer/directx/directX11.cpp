@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "directX11.h"
 #include <utils/functions.h>
 #include <globals/defs.h>

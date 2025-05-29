@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "animation.h"
 
 void Animation::AnimateFadeInFadeOut() {

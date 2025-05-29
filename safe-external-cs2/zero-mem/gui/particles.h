@@ -88,4 +88,46 @@ public:
             draw_list->AddCircleFilled(pos, 2.f, IM_COL32(205, 13, 117, 200));  // core
         }
     }
+
+    void DrawIdleWigglingDots(int dotCount = 100, float moveRadius = 2.0f) {
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        if (window->SkipItems) return;
+
+        SeedRand();
+
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+        ImVec2 win_pos = window->Pos;
+        ImVec2 win_size = window->Size;
+
+        struct Dot {
+            ImVec2 base_pos;  // fixed anchor position
+            float phase_x;
+            float phase_y;
+        };
+
+        static std::vector<Dot> dots;
+        static ImVec2 last_size;
+
+        if (dots.empty() || dots.size() != dotCount || win_size.x != last_size.x || win_size.y != last_size.y) {
+            dots.clear();
+            for (int i = 0; i < dotCount; ++i) {
+                float x = ((float)(rand() % 10000) / 10000.0f) * win_size.x;
+                float y = ((float)(rand() % 10000) / 10000.0f) * win_size.y;
+                float px = ((float)(rand() % 10000) / 10000.0f) * 6.28f;
+                float py = ((float)(rand() % 10000) / 10000.0f) * 6.28f;
+                dots.push_back({ ImVec2(x, y), px, py });
+            }
+            last_size = win_size;
+        }
+
+        float t = ImGui::GetTime();
+
+        for (const auto& dot : dots) {
+            float offset_x = sin(t * 2.0f + dot.phase_x) * moveRadius;
+            float offset_y = cos(t * 2.0f + dot.phase_y) * moveRadius;
+
+            ImVec2 pos = win_pos + dot.base_pos + ImVec2(offset_x, offset_y);
+            draw_list->AddCircleFilled(pos, 2.0f, IM_COL32(255, 255, 255, 100));
+        }
+    }
 };

@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "CEntities.h"
 
 CEntity* CEntityCollection::FindEntityByName(CEntity& entity, std::string name) {

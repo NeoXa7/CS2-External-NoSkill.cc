@@ -102,6 +102,9 @@
     <ClCompile Include="zero-mem\sdk\defs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="zero-mem\pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals\offsets.h">
@@ -318,6 +321,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="zero-mem\gui\particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zero-mem\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

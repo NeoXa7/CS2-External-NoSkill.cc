@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "SRCS.h"
 
 void SRCS::RUN() {

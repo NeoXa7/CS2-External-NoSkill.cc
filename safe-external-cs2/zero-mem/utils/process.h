@@ -11,7 +11,7 @@ public:
 
 public:
     // Get process id by name
-    uintptr_t GetProcessID(const char* process_name)
+    uintptr_t GetProcessID(const wchar_t* process_name)
     {
         DWORD procId = 0;
         HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -21,7 +21,7 @@ public:
 
             if (Process32FirstW(hSnap, &procEntry)) {
                 do {
-                    if (!_wcsicmp(procEntry.szExeFile, (const wchar_t*)process_name)) {
+                    if (!_wcsicmp(procEntry.szExeFile, process_name)) {
                         procId = procEntry.th32ProcessID;
                         break;
                     }
@@ -69,7 +69,7 @@ public:
     }
 
     // To check if the process is opened or not (returns true or false)
-    bool ProcessIsOpen(const char* process_name)
+    bool ProcessIsOpen(const wchar_t* process_name)
     {
         return GetProcessID(process_name) != 0;
     }

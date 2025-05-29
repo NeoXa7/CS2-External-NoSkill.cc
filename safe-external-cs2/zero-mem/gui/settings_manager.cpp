@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "settings_manager.h"
 
 void SettingsManager::SaveSettings() {

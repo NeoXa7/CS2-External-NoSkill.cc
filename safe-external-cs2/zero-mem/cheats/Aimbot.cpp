@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "Aimbot.h"
 #include <utils/process.h>
 

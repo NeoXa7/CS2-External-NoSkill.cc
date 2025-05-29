@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "sdk.h"
 #include <utils/process.h>
 #include <globals/defs.h>

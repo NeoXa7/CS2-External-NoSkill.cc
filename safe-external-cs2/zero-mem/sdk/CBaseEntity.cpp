@@ -1,4 +1,5 @@
-﻿#include "CBaseEntity.h"
+﻿#include <pch.h>
+#include "CBaseEntity.h"
 #include "defs.h"
 
 Vector3 CBaseEntity::GetBone3D(BoneIndex type) {

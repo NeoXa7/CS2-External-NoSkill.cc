@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "defs.h"
 
 CSourceEngine& SourceEngine = Instance<CSourceEngine>::Get();
