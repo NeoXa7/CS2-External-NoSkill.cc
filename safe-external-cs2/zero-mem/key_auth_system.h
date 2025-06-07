@@ -6,9 +6,10 @@
 #include <libs/xorstr.h>
 #include <utils/console.h>
 
-std::string name = xorstr_("NoSkill.cc");
-std::string ownerid = xorstr_("bv6UWJfoiz");
-std::string secret = xorstr_("9e06931b982d57acf48d8f92dd86d1687e4f78cc3a4d1097ce99e9fa601e5b1d");
+// keyauth.cc
+std::string name = xorstr_("your-app-name");
+std::string ownerid = xorstr_("your-owner-id");
+std::string secret = xorstr_("your-secret-key");
 std::string version = xorstr_("1.0");
 std::string url = xorstr_("https://keyauth.win/api/1.3/");
 std::string path = xorstr_("");
