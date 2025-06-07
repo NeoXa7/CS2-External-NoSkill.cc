@@ -4,6 +4,8 @@
 #include <libs/json.hpp>
 #include <libs/xorstr.h>
 
+// slow but gets the job done
+
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
