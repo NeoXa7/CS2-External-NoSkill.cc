@@ -1,0 +1,21 @@
+#include <pch.h>
+#include <main.h>
+
+/*	
+	MY C++ CODE IS EASIER TO UNDERSTAND IF YOU KNOW ENGLISH ~
+	 - NeoXa7 (Developer)
+
+	 DO NOT CHANGE THE PROCESS MANAGER CODE BELOW OR YOU WILL ENCOUNTER AN POSSIBLE BLUE SCREEN OF DEATH 
+
+	COPY THE BIN FOLDER TO THE COMPILED EXECUTABLE FOLDER TO EXECUTE THE EXE FILE
+
+	CONTACT ME ON : 
+		DISCORD : imneoxa7
+		INSTAGRAM : cpt_america.7 (MORE ACTIVE ON INSTAGRAM FOLLOW TO MSG ME)
+*/
+
+INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
+{  
+	Instance<MAIN>::Get().Start();
+	return 0;
+}
